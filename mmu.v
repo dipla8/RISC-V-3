@@ -23,6 +23,7 @@ module memory_management_unit(
 	.byte_selector(byte_select_vector),
 	.dataout(dataout_mem);
 );
+	// PREPEI NA MPEI ENA BYTE SELECTOR STH CACHE POU DEN UPHRXE POTE!!!!!!!!!!!!!!!!
 	cache cache_inst(
 	.clk(clk),
 	.wen(wen),
