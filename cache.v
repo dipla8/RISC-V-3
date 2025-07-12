@@ -1,5 +1,6 @@
 module cache(
 input clk, reset, ren, wen,
+input [3:0] byte_selector,
 input [31:0] address, datamemin, datawr,
 output reg [31:0] dataout, datamemout,
 output reg miss, memwr
@@ -14,7 +15,7 @@ always @(negedge clk or posedge reset)begin
 	miss <= 0;
 	memwr <= 0;
 	if(reset)begin
-		for(i = 0; i<8;i = i+ 1;)begin
+		for(i = 0; i<8;i = i+ 1)begin
 			cmem[i][0][62] <= 0;
 			// INVALIDATE ADDRESSES
 		end
@@ -42,12 +43,26 @@ always @(negedge clk or posedge reset)begin
 	// WRITE ON THE APPROPRIATE VALID ADDRESS, MAKE THE BIT DIRTY
 	if(wen && !ren)begin
 		if (cmem[address[2:0]][0][50:31] == address[31:2] && cmem[address[2:0]][0][62])begin
-			cmem[address[2:0]][0][31:0] <= datawr;
+			if(byte_selector[3])
+				cmem[address[2:0]][0][31:24] <= datawr[31:24];
+			if(byte_selector[2])
+				cmem[address[2:0]][0][23:16] <= datawr[23:16];
+			if(byte_selector[1])
+				cmem[address[2:0]][0][15:8] <= datawr[15:8];
+			if(byte_selector[0])
+				cmem[address[2:0]][0][7:0] <= datawr[7:0];
 			cmem[address[2:0]][0][61] <= 1;
 			LRUbits[address[2:0]] <= 1;
 		end
 		else if (cmem[address[2:0]][1][50:31] == address[31:2] && cmem[address[2:0]][1][62])begin
-			cmem[address[2:0]][1][31:0] <= datawr;
+			if(byte_selector[3])
+				cmem[address[2:0]][1][31:24] <= datawr[31:24];
+			if(byte_selector[2])
+				cmem[address[2:0]][1][23:16] <= datawr[23:16];
+			if(byte_selector[1])
+				cmem[address[2:0]][1][15:8] <= datawr[15:8];
+			if(byte_selector[0])
+				cmem[address[2:0]][1][7:0] <= datawr[7:0];
 			cmem[address[2:0]][1][61] <= 1;
 			LRUbits[address[2:0]] <= 0;
 		end
@@ -59,7 +74,14 @@ always @(negedge clk or posedge reset)begin
 				memwr <=1;
 			end
 			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:2];
-			cmem[address[2:0]][LRUbits[address[2:0]]][31:0] <= datawr;
+			if(byte_selector[3])
+				cmem[address[2:0]][LRUbits[address[2:0]]][31:24] <= datawr[31:24];
+			if(byte_selector[2])
+				cmem[address[2:0]][LRUbits[address[2:0]]][23:16] <= datawr[23:16];
+			if(byte_selector[1])
+				cmem[address[2:0]][LRUbits[address[2:0]]][15:8] <= datawr[15:8];
+			if(byte_selector[0])
+				cmem[address[2:0]][LRUbits[address[2:0]]][7:0] <= datawr[7:0];
 			cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b11;
 		end
 	end

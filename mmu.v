@@ -5,42 +5,50 @@ module memory_management_unit(
 	input [31:0] datain,
 	input wen,
 	input ren,
-	input [3:0] byte_select_vector
+	input [3:0] byte_select_vector,
 	output reg nostall,
-	output reg dataout
+	output reg [31:0] dataout
 );
-	reg old_address;
+	reg [31:0] old_address;
 	wire dataout_cache;
 	wire miss_cache;
-	wire dataout_mem
+	wire memwr_cache;
+	wire cache_dataout;
+	wire [31:0] dataout_mem;
 	memory memory_inst(
 	.clk(clk),
 	.reset(reset),
 	.addy(addy),
 	.datain(dataout_cache),
 	.ren(miss_cache),
-	.wen(memwr)
+	.wen(memwr_cache),
 	.byte_selector(byte_select_vector),
-	.dataout(dataout_mem);
+	.dataout(dataout_mem)
 );
-	// PREPEI NA MPEI ENA BYTE SELECTOR STH CACHE POU DEN UPHRXE POTE!!!!!!!!!!!!!!!!
 	cache cache_inst(
 	.clk(clk),
 	.wen(wen),
 	.ren(ren),
 	.address(addy),
+	.byte_selector(byte_select_vector),
 	.datamemin(dataout_mem),
 	.datawr(datain),
-	.dataout(dataout),
-	.datamemout(dataout_cache)
+	.dataout(cache_dataout),
+	.datamemout(dataout_cache),
+	.memwr(memwr_cache)
 );
+	always @(miss_cache or memwr_cache)
+		nostall <= !(miss_cache && !(memwr_cache));
+	always @(cache_dataout)
+		dataout <= cache_dataout;
 // FORWARD LOGIC (SO IT DOESN'T STALL)
 	always @(negedge clk or posedge reset)begin
 		if(reset)begin
-			old_address <= 0;
+			old_address <= 32'b0;
 		end
 		if(ren && !wen && (addy == old_address))begin
 			dataout <= dataout_mem;
 		end
 		old_address <= addy;
 	end
+endmodule
