@@ -35,6 +35,7 @@ module memory_management_unit(
 	.datawr(datain),
 	.dataout(cache_dataout),
 	.datamemout(dataout_cache),
+	.miss(miss_cache),
 	.memwr(memwr_cache)
 );
 	always @(miss_cache or memwr_cache)
