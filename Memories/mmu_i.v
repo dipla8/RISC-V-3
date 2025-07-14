@@ -11,8 +11,8 @@ module memory_management_unit_i(
 );
 	reg [31:0] old_address1;
 	wire wnext1;
-	wire wnextin1;
-	wire dataout_cache;
+	reg wnextin1;
+	wire [31:0] dataout_cache;
 	wire miss_cache;
 	wire memwr_cache;
 	wire [31:0] cache_dataout;
@@ -28,6 +28,7 @@ module memory_management_unit_i(
 );
 	cache cache_inst(
 	.clk(clk),
+	.reset(reset),
 	.wen(wen),
 	.ren(ren),
 	.wnextin(wnextin1),
@@ -43,18 +44,24 @@ module memory_management_unit_i(
 	.memwr(memwr_cache)
 );
 	assign nostall = !(miss_cache && !(memwr_cache));
-	assign wnextin1 = wnext1;
 	always @(cache_dataout)begin
 		dataout = cache_dataout;
 	end
 // FORWARD LOGIC (SO IT DOESN'T STALL)
 	always @(negedge clk or posedge reset)begin
 		if(reset)begin
+			wnextin1 <= 0;
 			old_address1 <= 32'b0;
 		end
-		if(ren && !wen && (addy == old_address1))begin
+		/*if(ren && !wen && (addy == old_address1))begin
 			dataout <= dataout_mem;
 		end
+		old_address1 <= addy;
+		*/
+		if(miss_cache && !memwr_cache)begin
+			dataout <= dataout_mem;
+		end
+		wnextin1 <= wnext1;
 		old_address1 <= addy;
 	end
 endmodule

@@ -9,7 +9,7 @@ output reg miss, memwr, wnext
 // 8 sets
 // 1 valid bit, 1 dirty bit, 29 bit tag, 32 bit data
 reg [62:0] cmem [0:7][0:1]; // 2-WAY-SET-ASSOCIATIVE
-reg [0:7] LRUbits;
+reg [7:0] LRUbits;
 integer i;
 always @(negedge clk or posedge reset)begin
 	// SET SIGNALS
@@ -17,8 +17,10 @@ always @(negedge clk or posedge reset)begin
 	memwr <= 0;
 	if(reset)begin
 		wnext <= 0;
+		LRUbits <= 8'b0;
 		for(i = 0; i<8;i = i+ 1)begin
 			cmem[i][0][62] <= 0;
+			cmem[i][1][62] <= 0;
 			// INVALIDATE ADDRESSES
 		end
 	end
@@ -35,7 +37,7 @@ always @(negedge clk or posedge reset)begin
 	// IF NOT ITS A MISS, GET THE DATA FROM THE MAIN MEM AND WRITE IT IN THE CACHE
 		else begin
 			miss <= 1;
-			cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b10;
+			//cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b10;
 			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:2];
 			LRUbits[address[2:0]] = !LRUbits[address[2:0]];
 			wnext <= 1;
@@ -88,16 +90,13 @@ always @(negedge clk or posedge reset)begin
 		end
 	end
 	if(wnextin)begin
-		if (cmem[old_address[2:0]][0][50:31] == old_address[31:2])begin
-			cmem[old_address[2:0]][0][31:0] <= datamemin;	
-		end
-		else if (cmem[old_address[2:0]][1][50:31] == old_address[31:2])begin
-			cmem[old_address[2:0]][1][31:0] <= datamemin;	
-		end
-		wnext <= 0;
-	end
-	else begin
-	// error
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
+		for (i = 0; i < 8; i = i + 1) begin
+    $display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
+    $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
+    		end
+		wnext <= 1;
 	end
 end
 endmodule

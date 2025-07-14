@@ -28,6 +28,7 @@ module memory_management_unit_d(
 );
 	cache cache_inst(
 	.clk(clk),
+	.reset(reset),
 	.wen(wen),
 	.ren(ren),
 	.wnextin(wnextin1),
