@@ -10,8 +10,6 @@ module memory_management_unit_i(
 	output reg [31:0] dataout
 );
 	reg [31:0] old_address1;
-	wire wnext1;
-	reg wnextin1;
 	wire [31:0] dataout_cache;
 	wire miss_cache;
 	wire memwr_cache;
@@ -31,8 +29,6 @@ module memory_management_unit_i(
 	.reset(reset),
 	.wen(wen),
 	.ren(ren),
-	.wnextin(wnextin1),
-	.wnext(wnext1),
 	.old_address(old_address1),
 	.address(addy),
 	.byte_selector(byte_select_vector),
@@ -50,7 +46,6 @@ module memory_management_unit_i(
 // FORWARD LOGIC (SO IT DOESN'T STALL)
 	always @(negedge clk or posedge reset)begin
 		if(reset)begin
-			wnextin1 <= 0;
 			old_address1 <= 32'b0;
 		end
 		/*if(ren && !wen && (addy == old_address1))begin
@@ -61,7 +56,6 @@ module memory_management_unit_i(
 		if(miss_cache && !memwr_cache)begin
 			dataout <= dataout_mem;
 		end
-		wnextin1 <= wnext1;
 		old_address1 <= addy;
 	end
 endmodule

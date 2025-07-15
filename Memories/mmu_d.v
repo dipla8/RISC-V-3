@@ -10,9 +10,7 @@ module memory_management_unit_d(
 	output reg [31:0] dataout
 );
 	reg [31:0] old_address1;
-	wire wnext1;
-	wire wnextin1;
-	wire dataout_cache;
+	wire [31:0] dataout_cache;
 	wire miss_cache;
 	wire memwr_cache;
 	wire [31:0] cache_dataout;
@@ -31,8 +29,6 @@ module memory_management_unit_d(
 	.reset(reset),
 	.wen(wen),
 	.ren(ren),
-	.wnextin(wnextin1),
-	.wnext(wnext1),
 	.old_address(old_address1),
 	.address(addy),
 	.byte_selector(byte_select_vector),
@@ -44,7 +40,6 @@ module memory_management_unit_d(
 	.memwr(memwr_cache)
 );
 	assign nostall = !(miss_cache && !(memwr_cache));
-	assign wnextin1 = wnext1;
 	always @(cache_dataout)begin
 		dataout = cache_dataout;
 	end

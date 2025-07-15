@@ -1,15 +1,16 @@
 module cache(
-input clk, reset, ren, wen, wnextin,
+input clk, reset, ren, wen,
 input [3:0] byte_selector,
 input [31:0] old_address,
 input [31:0] address, datamemin, datawr,
 output reg [31:0] dataout, datamemout,
-output reg miss, memwr, wnext
+output reg miss, memwr
 );
 // 8 sets
 // 1 valid bit, 1 dirty bit, 29 bit tag, 32 bit data
 reg [62:0] cmem [0:7][0:1]; // 2-WAY-SET-ASSOCIATIVE
 reg [7:0] LRUbits;
+reg wnext;
 integer i;
 always @(negedge clk or posedge reset)begin
 	// SET SIGNALS
@@ -23,6 +24,15 @@ always @(negedge clk or posedge reset)begin
 			cmem[i][1][62] <= 0;
 			// INVALIDATE ADDRESSES
 		end
+	end
+	if(wnext)begin
+		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
+		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
+		for (i = 0; i < 8; i = i + 1) begin
+    $display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
+    $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
+    		end
+		wnext <= 0;
 	end
 	// HIT IF THE TAG MATCHES FOR EITHER BLOCK AND IF THEY ARE VALID
 	if(ren && !wen)begin
@@ -88,15 +98,6 @@ always @(negedge clk or posedge reset)begin
 			cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b11;
 			LRUbits[address[2:0]] = !LRUbits[address[2:0]];
 		end
-	end
-	if(wnextin)begin
-			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
-			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
-		for (i = 0; i < 8; i = i + 1) begin
-    $display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
-    $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
-    		end
-		wnext <= 1;
 	end
 end
 endmodule

@@ -1,8 +1,3 @@
-//
-//
-//	NO STALL FOR MEMORY ACCESS
-//
-//
 module memory_i(
 	input clk,
 	input [31:0] addy,
