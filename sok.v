@@ -13,7 +13,7 @@ module top(
 	wire mext_irq; // NOT IMPLEMENTED
 	wire intr_en;
 	wire write_pc;
-	wire memReady;
+	wire memReady1;
 	reg reset;
 	reg cpu_clk;
 	wire ren;
@@ -47,7 +47,7 @@ module top(
 		.external_interrupt(mext_irq),
 		.instr_en(instr_en),
 		.write_pc_out(write_pc),
-		.memReady(memReady)
+		.memReady(memReady1)
 	);
 	memory_management_unit_i icache(
 	.clk(cpu_clk),
@@ -57,10 +57,10 @@ module top(
 	.wen(1'b0),
 	.ren(instr_en),
 	.byte_select_vector(byte_selector),
-	.nostall(memReady),
+	.memReady(memReady1),
 	.dataout(instruction)
 	);
-	memory_management_unit_d dcache(
+	/*memory_management_unit_d dcache(
 	.clk(cpu_clk),
 	.reset(!reset),
 	.addy(data_addr),
@@ -68,7 +68,7 @@ module top(
 	.wen(wen),
 	.ren(ren),
 	.byte_select_vector(byte_selector),
-	.nostall(memReady),
+	.memReady(memReady),
 	.dataout(datain_cpu)
 	);
 	//clint clint1(
@@ -76,5 +76,5 @@ module top(
 	//.reset(reset),
 	//.addr(data_addr),
 	//.wdata(dataout_cpu),
-	//);
+	//);*/
 endmodule

@@ -4,7 +4,8 @@ module memory_i(
 	input [31:0] datain,
 	input wen, ren,
 	input [3:0] byte_selector,
-	output reg [31:0] dataout
+	output reg [31:0] dataout,
+	output reg memsig
 );
 reg [31:0] datamem[1023:0];
 integer i;
@@ -19,10 +20,12 @@ initial begin
 	//`endif
 end
 always@(negedge clk)begin
+	memsig<=1'b0;
 	// READING
 	if(ren && !wen)begin
 		if(addy/4 < 1024)begin
 			dataout <= datamem[addy/4];
+			memsig <= 1'b1;
 		end
 		else dataout <= 32'b0;
 	end

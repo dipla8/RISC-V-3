@@ -4,20 +4,20 @@ input [3:0] byte_selector,
 input [31:0] old_address,
 input [31:0] address, datamemin, datawr,
 output reg [31:0] dataout, datamemout,
-output reg miss, memwr
+output reg memwr,
+output reg miss
 );
 // 8 sets
 // 1 valid bit, 1 dirty bit, 29 bit tag, 32 bit data
 reg [62:0] cmem [0:7][0:1]; // 2-WAY-SET-ASSOCIATIVE
 reg [7:0] LRUbits;
-reg wnext;
 integer i;
 always @(negedge clk or posedge reset)begin
 	// SET SIGNALS
-	miss <= 0;
 	memwr <= 0;
 	if(reset)begin
-		wnext <= 0;
+		//wnext <= 0;
+		miss <= 0;
 		LRUbits <= 8'b0;
 		for(i = 0; i<8;i = i+ 1)begin
 			cmem[i][0][62] <= 0;
@@ -25,22 +25,25 @@ always @(negedge clk or posedge reset)begin
 			// INVALIDATE ADDRESSES
 		end
 	end
-	if(wnext)begin
+	if(miss)begin
+		miss <=0;
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
 		for (i = 0; i < 8; i = i + 1) begin
     $display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
     $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
     		end
-		wnext <= 0;
+		//wnext <= 0;
 	end
 	// HIT IF THE TAG MATCHES FOR EITHER BLOCK AND IF THEY ARE VALID
 	if(ren && !wen)begin
 		if (cmem[address[2:0]][0][50:31] == address[31:2] && cmem[address[2:0]][0][62])begin
+			miss <=0;
 			dataout <= cmem[address[2:0]][0][31:0];
 			LRUbits[address[2:0]] <= 1;
 		end
 		else if (cmem[address[2:0]][1][50:31] == address[31:2] && cmem[address[2:0]][1][62])begin
+			miss <=0;
 			dataout <= cmem[address[2:0]][1][31:0];
 			LRUbits[address[2:0]] <= 0;
 		end
@@ -50,12 +53,13 @@ always @(negedge clk or posedge reset)begin
 			//cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b10;
 			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:2];
 			LRUbits[address[2:0]] = !LRUbits[address[2:0]];
-			wnext <= 1;
+			//wnext <= 1;
 		end
 	end
 	// WRITE ON THE APPROPRIATE VALID ADDRESS, MAKE THE BIT DIRTY
 	if(wen && !ren)begin
 		if (cmem[address[2:0]][0][50:31] == address[31:2] && cmem[address[2:0]][0][62])begin
+			miss <=0;
 			if(byte_selector[3])
 				cmem[address[2:0]][0][31:24] <= datawr[31:24];
 			if(byte_selector[2])
@@ -68,6 +72,7 @@ always @(negedge clk or posedge reset)begin
 			LRUbits[address[2:0]] <= 1;
 		end
 		else if (cmem[address[2:0]][1][50:31] == address[31:2] && cmem[address[2:0]][1][62])begin
+			miss <=0;
 			if(byte_selector[3])
 				cmem[address[2:0]][1][31:24] <= datawr[31:24];
 			if(byte_selector[2])
