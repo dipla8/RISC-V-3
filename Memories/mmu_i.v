@@ -54,6 +54,8 @@ module memory_management_unit_i(
 				if(miss_cache && !memwr_cache)begin
 			dataout <= dataout_mem;
 		end
+		if(!memsig1)begin
 		old_address1 <= address;
+		end
 	end
 endmodule

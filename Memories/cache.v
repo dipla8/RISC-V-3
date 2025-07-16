@@ -29,7 +29,12 @@ always @(negedge clk or posedge reset)begin
 		miss <=0;
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][60:32] <= old_address[31:2];
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
-		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
+		if(^datamemin === 1'bx)begin
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b00;
+		end
+		else begin
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
+		end
 		LRUbits[address[2:0]] = !LRUbits[address[2:0]];
 			
 		for (i = 0; i < 8; i = i + 1) begin
