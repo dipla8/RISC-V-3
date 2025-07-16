@@ -1,7 +1,7 @@
 module memory_management_unit_i(
 	input clk,
 	input reset,
-	input [31:0] addy,
+	input [31:0] address,
 	input [31:0] datain,
 	input wen,
 	input ren,
@@ -17,7 +17,7 @@ module memory_management_unit_i(
 	wire [31:0] dataout_mem;
 	memory_i memory_inst(
 	.clk(clk),
-	.addy(addy),
+	.address(address>>2),
 	.datain(dataout_cache),
 	.ren(miss_cache),
 	.wen(memwr_cache),
@@ -30,8 +30,8 @@ module memory_management_unit_i(
 	.reset(reset),
 	.wen(wen),
 	.ren(ren && (!miss_cache || memsig1)),
-	.old_address(old_address1),
-	.address(addy),
+	.old_address(old_address1>>2),
+	.address(address>>2),
 	.byte_selector(byte_select_vector),
 	.datamemin(dataout_mem),
 	.datawr(datain),
@@ -44,7 +44,7 @@ module memory_management_unit_i(
 		dataout <= cache_dataout;
 	end
 	always @(miss_cache or memsig1 or reset)begin
-		memReady <= !((miss_cache && !memsig1) || reset);
+		memReady <= (!(miss_cache && !memsig1) || reset);
 	end
 // FORWARD LOGIC (SO IT DOESN'T STALL)
 	always @(negedge clk or posedge reset)begin
@@ -54,6 +54,6 @@ module memory_management_unit_i(
 				if(miss_cache && !memwr_cache)begin
 			dataout <= dataout_mem;
 		end
-		old_address1 <= addy;
+		old_address1 <= address;
 	end
 endmodule

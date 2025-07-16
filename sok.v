@@ -52,7 +52,7 @@ module top(
 	memory_management_unit_i icache(
 	.clk(cpu_clk),
 	.reset(!reset),
-	.addy(PC),
+	.address(PC),
 	.datain(32'b0),
 	.wen(1'b0),
 	.ren(instr_en),
