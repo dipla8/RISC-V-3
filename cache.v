@@ -27,16 +27,16 @@ always @(negedge clk or posedge reset)begin
 	end
 	if(miss)begin
 		miss <=0;
-		cmem[old_address[2:0]][LRUbits[old_address[2:0]]][60:32] <= old_address[31:2];
+		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][60:32] <= old_address[31:2];
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b10;
-		LRUbits[old_address[2:0]] = !LRUbits[old_address[2:0]];
+		LRUbits[address[2:0]] = !LRUbits[address[2:0]];
 			
 		for (i = 0; i < 8; i = i + 1) begin
     $display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
     $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
     		end
-    		$display("end cache...");
+    		$display("added %h...", old_address<<2);
 		//wnext <= 0;
 	end
 	// HIT IF THE TAG MATCHES FOR EITHER BLOCK AND IF THEY ARE VALID
