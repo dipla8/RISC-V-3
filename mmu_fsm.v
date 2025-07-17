@@ -1,4 +1,4 @@
-module mmu_fsm_logic 
+/*module mmu_fsm_logic 
 
     parameter CACHE_STATE = 2'b01;
     parameter MEM_STATE = 2'b10;
@@ -56,3 +56,4 @@ module mmu_fsm_logic
         endcase
     end
 endmodule
+*/
