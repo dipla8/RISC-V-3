@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Wed Jul 16 14:45:15 2025
+[*] Thu Jul 17 15:32:36 2025
 [*]
 [dumpfile] "/home/kostis/Desktop/riskv3/Testbench/ZSOC.vcd"
-[dumpfile_mtime] "Wed Jul 16 14:45:04 2025"
-[dumpfile_size] 8922452
+[dumpfile_mtime] "Thu Jul 17 15:30:54 2025"
+[dumpfile_size] 9282566
 [savefile] "/home/kostis/Desktop/riskv3/Testbench/gtkw.gtkw"
 [timestart] 0
 [size] 1848 1016
 [pos] 72 27
-*-3.129734 61 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-6.129734 50 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test.
 [treeopen] test.top1.
 [treeopen] test.top1.icache.
@@ -32,21 +32,12 @@ test.top1.write_pc
 test.top1.instruction[31:0]
 @200
 -
--instruction mmu
-@28
-test.top1.icache.clk
-test.top1.icache.miss_cache
-test.top1.icache.memwr_cache
-@200
--
 -instruction cache
 @28
 test.top1.icache.cache_inst.clk
 @22
 test.top1.icache.cache_inst.address[31:0]
-@23
 test.top1.icache.cache_inst.old_address[31:0]
-@22
 test.top1.icache.cache_inst.byte_selector[3:0]
 test.top1.icache.cache_inst.datamemin[31:0]
 test.top1.icache.cache_inst.dataout[31:0]
@@ -58,5 +49,7 @@ test.top1.icache.reset
 test.top1.icache.cache_inst.memwr
 @200
 -
+@28
+test.top1.icache.memReady
 [pattern_trace] 1
 [pattern_trace] 0
