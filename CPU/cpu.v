@@ -30,8 +30,6 @@ module cpu(	input clock,
 			output write_pc_out,
 			input memReady
 			);
-
-
 // // Data memory 1KB
 // Dmem cpu_DMem(
 // 	.clock(clock), 
@@ -440,8 +438,7 @@ begin
 end
 reg [31:0] newmepc;
 reg [255*8-1:0] pc_string;
-reg pc_jumped;
-
+//reg pc_jumped;
 
 localparam MEPC_IDLE = 32'h0;
 localparam MEPC_WAITINGJUMP = 32'h1;
@@ -451,7 +448,7 @@ always@(posedge clock or negedge reset)begin
 	if(reset==1'b0)begin
 		pc_string<="Reset";
 		newmepc <= 32'h0;
-		pc_jumped <= 1'b0;
+		//pc_jumped <= 1'b0;
 		mepc_state <= MEPC_IDLE;
 	end
 	else

@@ -26,7 +26,7 @@ always @(posedge clk or posedge reset)begin
 	end
 	if(miss)begin
 		miss <=0;
-		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][60:32] <= old_address[31:2];
+		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][60:32] <= old_address[31:3];
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
 		if(^datamemin === 1'bx)begin
 			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b00;
@@ -44,25 +44,24 @@ always @(posedge clk or posedge reset)begin
 	end
 	// HIT IF THE TAG MATCHES FOR EITHER BLOCK AND IF THEY ARE VALID
 	if(ren && !wen)begin
-		if ((cmem[address[2:0]][0][50:31] == address[31:2]) && (cmem[address[2:0]][0][62]))begin
+		if ((cmem[address[2:0]][0][60:32] == address[31:3]) && (cmem[address[2:0]][0][62]))begin
 			miss <=0;
 			dataout <= cmem[address[2:0]][0][31:0];
 			LRUbits[address[2:0]] <= 1;
 		end
-		else if ((cmem[address[2:0]][1][50:31] == address[31:2]) && (cmem[address[2:0]][1][62]))begin
+		else if ((cmem[address[2:0]][1][60:32] == address[31:3]) && (cmem[address[2:0]][1][62]))begin
 			miss <=0;
 			dataout <= cmem[address[2:0]][1][31:0];
 			LRUbits[address[2:0]] <= 0;
 		end
 	// IF NOT ITS A MISS, GET THE DATA FROM THE MAIN MEM AND WRITE IT IN THE CACHE
 		else begin
-			$display("hello...");
 			miss <= 1;
 		end
 	end
 	// WRITE ON THE APPROPRIATE VALID ADDRESS, MAKE THE BIT DIRTY
 	if(wen && !ren)begin
-		if (cmem[address[2:0]][0][50:31] == address[31:2] && cmem[address[2:0]][0][62])begin
+		if (cmem[address[2:0]][0][60:32] == address[31:3] && cmem[address[2:0]][0][62])begin
 			miss <=0;
 			if(byte_selector[3])
 				cmem[address[2:0]][0][31:24] <= datawr[31:24];
@@ -75,7 +74,7 @@ always @(posedge clk or posedge reset)begin
 			cmem[address[2:0]][0][61] <= 1;
 			LRUbits[address[2:0]] <= 1;
 		end
-		else if (cmem[address[2:0]][1][50:31] == address[31:2] && cmem[address[2:0]][1][62])begin
+		else if (cmem[address[2:0]][1][60:32] == address[31:3] && cmem[address[2:0]][1][62])begin
 			miss <=0;
 			if(byte_selector[3])
 				cmem[address[2:0]][1][31:24] <= datawr[31:24];
@@ -95,7 +94,7 @@ always @(posedge clk or posedge reset)begin
 				datamemout <= cmem[address[2:0]][LRUbits[address[2:0]]][61:0];
 				memwr <=1;
 			end
-			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:2];
+			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:3];
 			if(byte_selector[3])
 				cmem[address[2:0]][LRUbits[address[2:0]]][31:24] <= datawr[31:24];
 			if(byte_selector[2])

@@ -54,11 +54,11 @@ module memory_ctrl_i(
 		if(miss_cache && !memwr_cache)begin
 			dataout <= dataout_mem;
 		end
-		if(!memsig1 && miss_cache)begin
+		if(!memsig1/* && miss_cache*/)begin
 			old_address1 <= address;
 		end
-		if(!memsig1 && !miss_cache)begin
-			old_address1 <= 32'bx;
-		end
+		//if(!memsig1 && !miss_cache)begin
+		//	old_address1 <= 32'bx;
+		//end
 	end
 endmodule
