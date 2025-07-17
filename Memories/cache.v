@@ -12,11 +12,10 @@ output reg miss
 reg [62:0] cmem [0:7][0:1]; // 2-WAY-SET-ASSOCIATIVE
 reg [7:0] LRUbits;
 integer i;
-always @(negedge clk or posedge reset)begin
+always @(posedge clk or posedge reset)begin
 	// SET SIGNALS
 	memwr <= 0;
 	if(reset)begin
-		//wnext <= 0;
 		miss <= 0;
 		LRUbits <= 8'b0;
 		for(i = 0; i<8;i = i+ 1)begin
@@ -42,25 +41,23 @@ always @(negedge clk or posedge reset)begin
     $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
     		end
     		$display("added %h...", old_address<<2);
-		//wnext <= 0;
 	end
 	// HIT IF THE TAG MATCHES FOR EITHER BLOCK AND IF THEY ARE VALID
 	if(ren && !wen)begin
-		if (cmem[address[2:0]][0][50:31] == address[31:2] && cmem[address[2:0]][0][62])begin
+		if ((cmem[address[2:0]][0][50:31] == address[31:2]) && (cmem[address[2:0]][0][62]))begin
 			miss <=0;
 			dataout <= cmem[address[2:0]][0][31:0];
 			LRUbits[address[2:0]] <= 1;
 		end
-		else if (cmem[address[2:0]][1][50:31] == address[31:2] && cmem[address[2:0]][1][62])begin
+		else if ((cmem[address[2:0]][1][50:31] == address[31:2]) && (cmem[address[2:0]][1][62]))begin
 			miss <=0;
 			dataout <= cmem[address[2:0]][1][31:0];
 			LRUbits[address[2:0]] <= 0;
 		end
 	// IF NOT ITS A MISS, GET THE DATA FROM THE MAIN MEM AND WRITE IT IN THE CACHE
 		else begin
+			$display("hello...");
 			miss <= 1;
-			//cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b10;
-			//wnext <= 1;
 		end
 	end
 	// WRITE ON THE APPROPRIATE VALID ADDRESS, MAKE THE BIT DIRTY

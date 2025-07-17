@@ -19,7 +19,7 @@ initial begin
 	$readmemh("../includes/testbenchtext.hex", datamem);
 	//`endif
 end
-always@(negedge clk)begin
+always@(posedge clk)begin
 	memsig<=1'b0;
 	// READING
 	if(ren && !wen)begin
