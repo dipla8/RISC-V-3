@@ -4,9 +4,9 @@
 `include "../includes/config.vh"
 `endif
 `timescale 1ns/1ns
-module top(
-	
-);
+
+module top;
+
 	wire overflow; // NOT IMPLEMENTED
 	wire msw_irq; // clint
 	wire mtimer_irq; // clint
@@ -30,6 +30,7 @@ module top(
 		reset = 0;
 		#2 reset = 1;
 	end
+
 	cpu cpu1(
 		.clock(cpu_clk),
 		.reset(reset),
@@ -49,6 +50,7 @@ module top(
 		.write_pc_out(write_pc),
 		.memReady(memReady1)
 	);
+
 	memory_ctrl_i icache(
 	.clk(cpu_clk),
 	.reset(!reset),
@@ -60,6 +62,7 @@ module top(
 	.memReady(memReady1),
 	.dataout(instruction)
 	);
+	
 	/*memory_management_unit_d dcache(
 	.clk(cpu_clk),
 	.reset(!reset),

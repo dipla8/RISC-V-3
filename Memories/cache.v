@@ -37,25 +37,30 @@ always @(posedge clk or posedge reset)begin
 		LRUbits[address[2:0]] = !LRUbits[address[2:0]];
 			
 		for (i = 0; i < 8; i = i + 1) begin
-    $display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
-    $display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
-    		end
-    		$display("added %h...", old_address<<2);
+			$display("Set %0d - Way 0: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][0][62], cmem[i][0][61], cmem[i][0][60:32], cmem[i][0][31:0]);
+			$display("Set %0d - Way 1: V=%b D=%b TAG=%h DATA=%h", i, cmem[i][1][62], cmem[i][1][61], cmem[i][1][60:32], cmem[i][1][31:0]);
+		end
+    	$display("added %h...", old_address<<2);
 	end
+	$display("Address Tag: %h \t Cache Tag Way0: %h", address[31:3], cmem[address[2:0]][0][60:32]);
+	$display("Address Tag: %h \t Cache Tag Way1: %h", address[31:3], cmem[address[2:0]][1][60:32]);
 	// HIT IF THE TAG MATCHES FOR EITHER BLOCK AND IF THEY ARE VALID
 	if(ren && !wen)begin
 		if ((cmem[address[2:0]][0][60:32] == address[31:3]) && (cmem[address[2:0]][0][62]))begin
 			miss <=0;
 			dataout <= cmem[address[2:0]][0][31:0];
 			LRUbits[address[2:0]] <= 1;
+			$display("HIT_1a");
 		end
 		else if ((cmem[address[2:0]][1][60:32] == address[31:3]) && (cmem[address[2:0]][1][62]))begin
 			miss <=0;
 			dataout <= cmem[address[2:0]][1][31:0];
 			LRUbits[address[2:0]] <= 0;
+			$display("HIT_2a");
 		end
 	// IF NOT ITS A MISS, GET THE DATA FROM THE MAIN MEM AND WRITE IT IN THE CACHE
 		else begin
+			$display("MISS_a");
 			miss <= 1;
 		end
 	end
@@ -73,6 +78,7 @@ always @(posedge clk or posedge reset)begin
 				cmem[address[2:0]][0][7:0] <= datawr[7:0];
 			cmem[address[2:0]][0][61] <= 1;
 			LRUbits[address[2:0]] <= 1;
+			$display("HIT_1b");
 		end
 		else if (cmem[address[2:0]][1][60:32] == address[31:3] && cmem[address[2:0]][1][62])begin
 			miss <=0;
@@ -86,6 +92,7 @@ always @(posedge clk or posedge reset)begin
 				cmem[address[2:0]][1][7:0] <= datawr[7:0];
 			cmem[address[2:0]][1][61] <= 1;
 			LRUbits[address[2:0]] <= 0;
+			$display("HIT_2b");
 		end
 	// IF NOT THEN, IN CASE THE DATA FOR EVICTION IS DIRTY TAKE IT BACK, OTHERWISE REPLACE IT WITH NO FURTHER THOUGHT
 		else begin
@@ -94,7 +101,7 @@ always @(posedge clk or posedge reset)begin
 				datamemout <= cmem[address[2:0]][LRUbits[address[2:0]]][61:0];
 				memwr <=1;
 			end
-			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:3];
+			cmem[address[2:0]][LRUbits[address[2:0]]][60:32] <= address[31:2];
 			if(byte_selector[3])
 				cmem[address[2:0]][LRUbits[address[2:0]]][31:24] <= datawr[31:24];
 			if(byte_selector[2])
@@ -105,6 +112,7 @@ always @(posedge clk or posedge reset)begin
 				cmem[address[2:0]][LRUbits[address[2:0]]][7:0] <= datawr[7:0];
 			cmem[address[2:0]][LRUbits[address[2:0]]][62:61] <= 2'b11;
 			LRUbits[address[2:0]] = !LRUbits[address[2:0]];
+			$display("MISS_b");
 		end
 	end
 end
