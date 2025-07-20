@@ -60,42 +60,48 @@ module memory_d(
 	input [31:0] datain,
 	input wen, ren,
 	input [3:0] byte_selector,
-	output reg [31:0] dataout
+	output reg [31:0] dataout,
+	output reg memsig
 );
-reg [31:0] datamem[1023:0];
-integer i;
+reg [31:0] datamem2[1023:0];
+integer b;
 initial begin
-	for(i=0; i < 1024; i=i+1)begin
-		datamem[i] = 32'b0;
+	for(b=0; b < 1024; b=b+1)begin
+		datamem2[b] = 32'b0;
 	end
 	//`ifndef TESTBENCH
 	//$readmemh(`TEXT_HEX, datamem);
 	//`else
-	$readmemh("../includes/datamem.hex", datamem);
+	$readmemh("../includes/datamem.hex", datamem2);
 	//`endif
 end
-always@(negedge clk)begin
+always@(posedge clk)begin
+	memsig<=1'b0;
 	// READING
 	if(ren && !wen)begin
 		if(address < 1024)begin
-			dataout <= datamem[addy];
+			dataout <= datamem2[address];
+			$display("$$");
+			$display("pulled data %h from %h", datamem2[address], address);
+			$display("$$");
+			memsig <= 1'b1;
 		end
 		else dataout <= 32'b0;
 	end
 	// WRITING
 	else if(wen && !ren) begin
-		if(address < 1024)begin
+		if(address< 1024)begin
 			if(byte_selector[3])begin
-				datamem[addy][31:24] = datain[31:24];
+				datamem2[address][31:24] = datain[31:24];
 			end
 			if(byte_selector[2])begin
-				datamem[address][23:16] = datain[23:16];
+				datamem2[address][23:16] = datain[23:16];
 			end
 			if(byte_selector[1])begin
-				datamem[address][15:8] = datain[15:8];
+				datamem2[address][15:8] = datain[15:8];
 			end
 			if(byte_selector[0])begin
-				datamem[address][7:0] = datain[7:0];
+				datamem2[address][7:0] = datain[7:0];
 			end
 		end
 		else begin 

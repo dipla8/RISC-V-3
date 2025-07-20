@@ -15,6 +15,7 @@ module memory_ctrl_i(
 	wire memwr_cache;
 	wire [31:0] cache_dataout;
 	wire [31:0] dataout_mem;
+	wire memsig1;
 	memory_i memory_inst(
 	.clk(clk),
 	.address(address>>2),
