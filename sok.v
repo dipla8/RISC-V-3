@@ -4,20 +4,19 @@
 `include "../includes/config.vh"
 `endif
 `timescale 1ns/1ns
-module top(
-	
-);
+module top();
 	wire overflow; // NOT IMPLEMENTED
 	wire msw_irq; // clint
 	wire mtimer_irq; // clint
 	wire mext_irq; // NOT IMPLEMENTED
 	wire intr_en;
 	wire write_pc;
-	wire memReady1;
 	reg reset;
 	reg cpu_clk;
 	wire ren;
 	wire wen;
+	wire memReady1;
+	wire memReady2;
 	wire [31:0] PC;
 	wire [31:0] instruction;
 	wire [31:0] data_addr;
@@ -47,7 +46,7 @@ module top(
 		.external_interrupt(mext_irq),
 		.instr_en(instr_en),
 		.write_pc_out(write_pc),
-		.memReady(memReady1)
+		.memReady(memReady1 && memReady2)
 	);
 	memory_ctrl_i icache(
 	.clk(cpu_clk),
@@ -60,15 +59,15 @@ module top(
 	.memReady(memReady1),
 	.dataout(instruction)
 	);
-	/*memory_management_unit_d dcache(
+	memory_ctrl_d dcache(
 	.clk(cpu_clk),
 	.reset(!reset),
-	.addy(data_addr),
+	.address(data_addr),
 	.datain(dataout_cpu),
 	.wen(wen),
 	.ren(ren),
 	.byte_select_vector(byte_selector),
-	.memReady(memReady),
+	.memReady(memReady2),
 	.dataout(datain_cpu)
 	);
 	//clint clint1(
