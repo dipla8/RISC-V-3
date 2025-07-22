@@ -111,7 +111,7 @@ Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
 Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 5 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
@@ -128,9 +128,9 @@ Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
 Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 6 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
@@ -145,11 +145,11 @@ Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
 Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
@@ -162,37 +162,57 @@ Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
 Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 00000020...
+$$
+pulled data 00000001 from 00000000
+$$
+Set 0 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 0 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 1 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 1 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 2 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 3 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 4 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 5 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 6 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 7 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+added 00000000...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 1 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
 Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 00000024...
 $$
-pulled data 00000000 from 0000010c
+pulled data 00000001 from 00000000
 $$
 Set 0 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 0 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 0 - Way 1: V=0 D=0 TAG=00000000 DATA=xxxxxxxx
 Set 1 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 1 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 2 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
@@ -207,148 +227,111 @@ Set 6 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-added 00000430...
+added 00000000...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=00512023
 Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
 Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 00000028...
-$$
-pulled data 00000000 from 0000010c
-$$
-Set 0 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 0 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 1 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 1 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 2 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 3 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 1: V=0 D=0 TAG=00000021 DATA=xxxxxxxx
-Set 5 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 7 - Way 0: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-added 00000430...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
-Set 2 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 0: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 0000002c...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
-Set 2 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 0: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 0: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 3 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
 Set 4 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 00000030...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
-Set 2 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 0: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 0: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 3 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
+Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=fddff0ef
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
 Set 5 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 00000034...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
-Set 2 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 0: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 5 - Way 1: V=1 D=0 TAG=00000001 DATA=fddff0ef
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
+Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 0: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 3 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
+Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=fddff0ef
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
+Set 5 - Way 1: V=1 D=0 TAG=00000001 DATA=00250513
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 6 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 00000038...
 Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=00128293
 Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
-Set 2 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 0: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 5 - Way 1: V=1 D=0 TAG=00000001 DATA=fddff0ef
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
-Set 6 - Way 1: V=1 D=0 TAG=00000001 DATA=00250513
+Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 0: V=1 D=0 TAG=00000001 DATA=00512023
+Set 2 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
+Set 3 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 3 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
+Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=00000113
+Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=fddff0ef
+Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=00010283
+Set 5 - Way 1: V=1 D=0 TAG=00000001 DATA=00250513
+Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
+Set 6 - Way 1: V=1 D=0 TAG=00000001 DATA=05800593
 Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
 Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 0000003c...
-Set 0 - Way 0: V=1 D=0 TAG=00000000 DATA=04500594
-Set 0 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 1 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 1 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 2 - Way 0: V=1 D=0 TAG=00000000 DATA=01000093
-Set 2 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 0: V=1 D=0 TAG=00000001 DATA=04500593
-Set 3 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
-Set 4 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 4 - Way 1: V=1 D=0 TAG=00000001 DATA=04500593
-Set 5 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 5 - Way 1: V=1 D=0 TAG=00000001 DATA=fddff0ef
-Set 6 - Way 0: V=1 D=0 TAG=00000000 DATA=00c10283
-Set 6 - Way 1: V=1 D=0 TAG=00000001 DATA=00250513
-Set 7 - Way 0: V=1 D=0 TAG=00000000 DATA=04500593
-Set 7 - Way 1: V=1 D=0 TAG=00000001 DATA=05800593
-added 00000040...
 ** VVP Stop(0) **
 ** Flushing output streams.
-** Current simulation time is 43729 ticks.
+** Current simulation time is 20109 ticks.
 > finish
 ** Continue **

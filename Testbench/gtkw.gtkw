@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Thu Jul 17 15:32:36 2025
+[*] Tue Jul 22 08:38:09 2025
 [*]
 [dumpfile] "/home/kostis/Desktop/riskv3/Testbench/ZSOC.vcd"
-[dumpfile_mtime] "Thu Jul 17 15:30:54 2025"
-[dumpfile_size] 9282566
+[dumpfile_mtime] "Tue Jul 22 08:37:12 2025"
+[dumpfile_size] 13300354
 [savefile] "/home/kostis/Desktop/riskv3/Testbench/gtkw.gtkw"
 [timestart] 0
 [size] 1848 1016
 [pos] 72 27
-*-6.129734 50 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-6.129734 108 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test.
 [treeopen] test.top1.
-[treeopen] test.top1.icache.
+[treeopen] test.top1.dcache.
 [sst_width] 253
-[signals_width] 174
+[signals_width] 214
 [sst_expanded] 1
 [sst_vpaned_height] 411
 @200
@@ -47,9 +47,29 @@ test.top1.icache.cache_inst.miss
 test.top1.icache.memory_inst.memsig
 test.top1.icache.reset
 test.top1.icache.cache_inst.memwr
+test.top1.icache.memReady
+test.top1.cpu1.Jump
 @200
 -
+-data cache
+@22
+test.top1.dcache.address[31:0]
+test.top1.dcache.byte_select_vector[3:0]
+test.top1.dcache.cache_dataout[31:0]
+test.top1.dcache.datain[31:0]
+test.top1.dcache.dataout[31:0]
+test.top1.dcache.cache_inst.dataout[31:0]
+test.top1.dcache.dataout_mem[31:0]
 @28
-test.top1.icache.memReady
+test.top1.dcache.memReady
+test.top1.dcache.memsig1
+test.top1.dcache.memwr_cache
+test.top1.dcache.miss_cache
+@22
+test.top1.dcache.cache_inst.LRUbits[7:0]
+test.top1.dcache.cache_inst.datawr[31:0]
+@28
+test.top1.dcache.ren
+test.top1.dcache.wen
 [pattern_trace] 1
 [pattern_trace] 0
