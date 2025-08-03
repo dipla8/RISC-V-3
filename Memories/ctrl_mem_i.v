@@ -53,7 +53,14 @@ module memory_ctrl_i(
 			old_address1 <= 32'b0;
 		end
 		if(miss_cache && !memwr_cache)begin
-			dataout <= dataout_mem;
+			if(byte_selector[3])
+				dataout[31:24] <= dataout_mem[31:24];
+			if(byte_selector[2])
+				dataout[23:16] <= dataout_mem[23:16];
+			if(byte_selector[1])
+				dataout[15:8] <= dataout_mem[15:8];
+			if(byte_selector[0])
+				dataout[7:0] <= dataout_mem[7:0];
 		end
 		if(!memsig1/* && miss_cache*/)begin
 			old_address1 <= address;
