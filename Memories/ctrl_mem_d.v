@@ -18,7 +18,7 @@ module memory_ctrl_d(
 	wire memsig1;
 	memory_d memory_inst(
 	.clk(clk),
-	.address(address),
+	.address(address>>2),
 	.datain(dataout_cache),
 	.ren(miss_cache),
 	.wen(memwr_cache),
@@ -31,8 +31,8 @@ module memory_ctrl_d(
 	.reset(reset),
 	.wen(wen),
 	.ren(ren && (!miss_cache || memsig1)),
-	.old_address(old_address1),
-	.address(address),
+	.old_address(old_address1>>2),
+	.address(address>>2),
 	.byte_selector(byte_select_vector),
 	.datamemin(dataout_mem),
 	.datawr(datain),

@@ -57,6 +57,10 @@ always @(posedge clk or posedge reset)begin
 	// IF NOT ITS A MISS, GET THE DATA FROM THE MAIN MEM AND WRITE IT IN THE CACHE
 		else begin
 			miss <= 1;
+			if(cmem[address[2:0]][LRUbits[address[2:0]]][61])begin
+				datamemout <= cmem[address[2:0]][LRUbits[address[2:0]]][61:0];
+				memwr <=1;
+			end
 		end
 	end
 	// WRITE ON THE APPROPRIATE VALID ADDRESS, MAKE THE BIT DIRTY
