@@ -27,7 +27,14 @@ always @(posedge clk or posedge reset)begin
 	if(miss)begin
 		miss <=0;
 		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][60:32] <= old_address[31:3];
-		cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:0] <= datamemin;
+		if(byte_selector[3])
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][31:24] <= datamemin[31:24];
+		if(byte_selector[2])
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][23:16] <= datamemin[23:16];
+		if(byte_selector[1])
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][15:8] <= datamemin[15:8];
+		if(byte_selector[0])
+			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][7:0] <= datamemin[7:0];
 		if(^datamemin === 1'bx)begin
 			cmem[old_address[2:0]][!LRUbits[old_address[2:0]]][62:61] <= 2'b00;
 		end
