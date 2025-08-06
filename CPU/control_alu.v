@@ -18,16 +18,26 @@ begin
 	csr_immidiate = 0;
 	case (ALUcntrl)
 		`ALU_R: begin
-			case (funct3)
-				`FUNCT3_ADD_SUB:	ALUOp = (funct7 == `FUNCT7_ADD) ? `ADD : `SUB;
-				`FUNCT3_XOR:		ALUOp = `XOR;
-				`FUNCT3_OR:			ALUOp = `OR;
-				`FUNCT3_AND:		ALUOp = `AND;
-				`FUNCT3_SLL:		ALUOp = `SLL;
-				`FUNCT3_SRL:		ALUOp = (funct7 == `FUNCT7_SRL) ? `SRL : `SRA;
-				`FUNCT3_SLT:		ALUOp = `SLT;
-				`FUNCT3_SLTU:		ALUOp = `SLTU;
-				default:			ALUOp = `ADD;
+			case ({funct7, funct3})
+				{`FUNCT7_ADD,`FUNCT3_ADD_SUB}:	ALUOp = `ADD;
+				{`FUNCT7_SUB,`FUNCT3_ADD_SUB}: ALUOp = `SUB;
+				{`FUNCT7_ADD,`FUNCT3_XOR}: ALUOp = `XOR;
+				{`FUNCT7_ADD,`FUNCT3_OR}: ALUOp = `OR;
+				{`FUNCT7_ADD,`FUNCT3_AND}: ALUOp = `AND;
+				{`FUNCT7_ADD,`FUNCT3_SLL}: ALUOp = `SLL;
+				{`FUNCT7_ADD,`FUNCT3_SRL}: ALUOp = `SRL;
+				{`FUNCT7_SUB,`FUNCT3_SRL}: ALUOp = `SRA;
+				{`FUNCT7_ADD,`FUNCT3_SLT}: ALUOp = `SLT;
+				{`FUNCT7_ADD,`FUNCT3_SLTU}: ALUOp = `SLTU;
+				{`FUNCT7_MUL, `FUNCT3_MUL}: ALUOp = `MUL;
+				{`FUNCT7_MUL, `FUNCT3_MULH}: ALUOp = `MULH;
+				{`FUNCT7_MUL, `FUNCT3_MULHSU}: ALUOp = `MULHSU;
+				{`FUNCT7_MUL, `FUNCT3_MULHU}: ALUOp = `MULHU;
+				{`FUNCT7_MUL, `FUNCT3_DIV}: ALUOp = `DIV;
+				{`FUNCT7_MUL, `FUNCT3_DIVU}: ALUOp = `DIVU;
+				{`FUNCT7_MUL, `FUNCT3_REM}: ALUOp = `REM;
+				{`FUNCT7_MUL, `FUNCT3_REMU}: ALUOp = `REMU;
+				default: ALUOp = `ADD;
 			endcase
 		end
 		`ALU_LOAD_STORE: begin
@@ -53,7 +63,7 @@ begin
 				`FUNCT3_ORI:	ALUOp = `OR;
 				`FUNCT3_ANDI:	ALUOp = `AND;
 				`FUNCT3_SLLI:	ALUOp = `SLL;
-				`FUNCT3_SRLI:	ALUOp = (funct7 == `FUNCT7_SRL) ? `SRL : `SRA;
+				`FUNCT3_SRLI:	ALUOp = (funct7 == `FUNCT7_SUB) ? `SRL : `SRA;
 				`FUNCT3_SLTI:	ALUOp = `SLT;
 				`FUNCT3_SLTIU:	ALUOp = `SLTU;
 				default:		ALUOp = `ADD;

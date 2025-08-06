@@ -35,10 +35,18 @@ assign {overflow, out_val} = (op == `ADD) ? (inA + inB) :
 	(op == `SRA) 	? 	{1'b0, {inA >>> inB[4:0]}} :
 	(op == `SLT) 	? 	{1'b0, ( (inA < inB) ? 32'b1 : 32'b0 )} :
 	(op == `SLTU)	? 	{1'b0, ( ($unsigned(inA) < $unsigned(inB)) ? 32'b1 : 32'b0)} :
-	(op == `SUBU)  	? 	{1'b0, unsigned_sub[32:1]} : // bltu, bgeu
+	(op == `SUBU)  	? 	{1'b0, unsigned_sub[32:1]} : // bltu, bgeu [31:0]??
 	(op == `LUI)   	? 	{1'b0, inB[31:12], 12'b0}:
+	(op == `MUL)	?	{1'b0, inA * inB}:
+	(op == `MULH)	?	{1'b0, (inA * inB)>>32}:
+	(op == `MULHSU)	?	{1'b0, (inA * $unsigned(inB)) >> 32}:
+	(op == `MULHU)	?	{1'b0, ($unsigned(inA) * $unsigned(inB)) >> 32}:
+	(op == `DIV)	?	{1'b0, inA / inB}:
+	(op == `DIVU)	?	{1'b0, $unsigned(inA) / $unsigned(inB)}:
+	(op == `REM)	?	{1'b0, inA % inB}:
+	(op == `REMU)	?	{1'b0, $unsigned(inA) % $unsigned(inB)}:
 	(op == `AUIPC) 	? 	(inA + {inB[31:12], 12'b0}) : 33'b0;
-
+	
 assign zero = (out == 0);
 assign out 	= {{(N-32){out_val[31]}}, out_val[31:0]};
 
