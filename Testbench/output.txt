@@ -332,6 +332,6 @@ Set 7 - Way 1: V=0 D=x TAG=Xxxxxxxx DATA=xxxxxxxx
 added 0000003c...
 ** VVP Stop(0) **
 ** Flushing output streams.
-** Current simulation time is 20109 ticks.
+** Current simulation time is 36629 ticks.
 > finish
 ** Continue **
