@@ -18,7 +18,7 @@ module memory_ctrl_d(
 	wire memsig1;
 	memory_d memory_inst(
 	.clk(clk),
-	.address(address>>2),
+	.address(address),
 	.datain(dataout_cache),
 	.ren(miss_cache),
 	.wen(memwr_cache),
