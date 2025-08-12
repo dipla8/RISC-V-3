@@ -47,12 +47,12 @@ reg		[31:0]	PC, PC_OLD, IFID_PC, IDEX_PC, EXMEM_PC, MEMWB_PC;
 wire	[31:0]	PCplus4, JumpAddress;
 reg 	[31:0] PC_new;
 wire	[31:0]	instr;
-reg		[31:0]	IF2_instr;
+reg	[31:0]	IF2_instr;
 reg	[31:0]	IDEX_instr;
 reg	[31:0]	EXMEM_instr;
 reg	[31:0]	MEMWB_instr;
 reg     [31:0]  delayed_instr;
-wire			inA_is_PC, branch_taken;
+wire		inA_is_PC, branch_taken;
 wire	[31:0]	BranchInA;
 reg		[31:0]	IDEX_signExtend;
 wire	[31:0]	signExtend;
@@ -86,6 +86,7 @@ reg 	[1:0] 	MEMWB_reg_type;
 reg 	[31:0] 	ALUInA, ALUInB;
 wire 	[31:0] 	bypassOutA, bypassOutB;
 wire	[31:0]	ALUOut, BranchALUOut, DMemOut, MemOut;
+wire	[31:0]	divrem, divres;
 reg     [31:0]  wRegData;
 reg     [31:0]  WB_csr_data;
 wire			Zero, RegDst, MemRead, MemWrite, MemToReg, ALUSrc, PCSrc, RegWrite, Jump, JumpJALR;
@@ -119,9 +120,11 @@ reg      		EXMEM_csr_immidiate;
 reg      		MEMWB_csr_immidiate;
 
 
+reg [5:0] local_divcy;
+wire [5:0] divcy;
 wire	[6:0]	funct7;
 wire	[4:0]	instr_rs1, instr_rs2, instr_rd, RegWriteAddr;
-wire	[3:0]	ALUOp;
+wire	[4:0]	ALUOp;
 wire	[1:0]	bypassA, bypassB;
 wire	[31:0]	imm_i, imm_s, imm_b, imm_u, imm_j, imm_z;
 reg keepDelayInstr=0;
@@ -288,8 +291,6 @@ assign instr_rd		= IFID_instr[11:7];
 // just OR it with syscall and give it to the control stall unit
 assign syscall		= (IDEX_Jump==1'b0 & 
 						IDEX_JumpJALR==1'b0&opcode == `I_ENV_FORMAT & funct3==0) ? 1'b1 : 1'b0;
-
-
 always @(*) begin
 	if(reg_type == 2'b01) begin
 		if(funct3[1:0] == 2'b00) begin
@@ -353,7 +354,7 @@ SignExtendSelector SignExtendSelector (
 
 // IDEX pipeline register
 always @(posedge clock or negedge reset)
-begin 
+begin
 	if ((reset == 1'b0)) begin
 		IDEX_inA_is_PC	<= 1'b0;
 		IDEX_Jump		<= 1'b0;
@@ -424,11 +425,11 @@ begin
 			IDEX_MemWrite	<= MemWrite;
 			IDEX_MemToReg	<= MemToReg;
 			IDEX_RegWrite	<= RegWrite;
-			IDEX_funct3		<= funct3;
-			IDEX_funct7		<= funct7;
-			IDEX_PC			<= IFID_PC;
-			IDEX_rdA		<= rdA;
-			IDEX_rdB		<= rdB;
+			IDEX_funct3	<= funct3;
+			IDEX_funct7	<= funct7;
+			IDEX_PC		<= IFID_PC;
+			IDEX_rdA	<= rdA;
+			IDEX_rdB	<= rdB;
 			IDEX_reg_type	<= reg_type;
 			IDEX_instr		<= IFID_instr;
 			IDEX_csr_addr	<= csr_addr;
@@ -579,7 +580,8 @@ control_main control_main (
 	.ALUcntrl(ALUcntrl),
 	.opcode(opcode)
 );
-
+wire [31:0] div_rdA, div_rdB;
+//division FSM
 // Control Unit that generates stalls and bubbles to pipeline stages
 control_stall_id control_stall_id (
 	.bubble_ifid	(bubble_ifid),
@@ -606,6 +608,8 @@ control_stall_id control_stall_id (
 	.int_trap		(int_taken),
 	.flushPipeline	(flushPipeline),
 	.memReady		(memReady),
+	.trapdiv(trapdiv),
+	.divcy((local_divcy != 32)),
 	.PCSrc			(PCSrc));
 
 /************************ Execution Unit (EX)  ***********************************/
@@ -635,25 +639,48 @@ assign BranchInA = (IDEX_JumpJALR == 1'b1) ? bypassOutA : IDEX_PC;
 assign BranchALUOut = BranchInA + IDEX_signExtend;
 
 // ALU
-ALUCPU cpu_alu(.out(ALUOut),
-			.zero(Zero),	
-			.overflow(overflow),
-			.inA(ALUInA),
-			.inB(ALUInB),
-			.op(ALUOp));
-
+ALUCPU cpu_alu(		
+	.out(ALUOut),
+	.zero(Zero),	
+	.overflow(overflow),
+	.inA(ALUInA),
+	.inB(ALUInB),
+	.op(ALUOp)
+);
 assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
-
+// DIVISION UNIT
+division_unit DU(
+	.clk(clock),
+	.reset(!reset),
+	.ALUOp(ALUOp),
+	.cpu_divcy(local_divcy),
+	.du_divcy(divcy),
+	.trapdiv(trapdiv),
+	.inA(IDEX_rdA),
+	.inB(IDEX_rdB),
+	.rem(divrem),
+	.quo(divres)	
+);
 // EXMEM pipeline register
 always @(posedge clock or negedge reset)
 begin
+	if(local_divcy == 6'd32 && divcy != 6'd32)begin
+		local_divcy <= divcy;
+	end
+	if(local_divcy != 6'd32)begin
+		local_divcy <= local_divcy-1;
+	end
+	if(local_divcy == 6'd0)begin
+		local_divcy <= 6'd32;
+	end
 	if ((reset == 1'b0)) begin
+		local_divcy		<= 6'd32;
 		EXMEM_ALUOut		<= 32'b0;
 		EXMEM_JumpJALR 		<= 1'b0;
 		EXMEM_BranchALUOut	<= 32'b0;
 		EXMEM_RegWriteAddr	<= 5'b0;
 		EXMEM_MemWriteData	<= 32'b0;
-		EXMEM_Zero			<= 1'b0;
+		EXMEM_Zero		<= 1'b0;
 		EXMEM_Branch		<= 1'b0;
 		EXMEM_MemRead		<= 1'b0;
 		EXMEM_MemWrite		<= 1'b0;
@@ -690,7 +717,7 @@ begin
 			EXMEM_instr			<= 32'b0;
 		end 
 		else if (write_exmem == 1'b1) begin
-			EXMEM_ALUOut		<= ALUOut;
+			EXMEM_ALUOut		<= divres ? divres : ALUOut;
 			EXMEM_JumpJALR		<= IDEX_JumpJALR;
 			EXMEM_BranchALUOut	<= BranchALUOut;
 			EXMEM_RegWriteAddr	<= RegWriteAddr;

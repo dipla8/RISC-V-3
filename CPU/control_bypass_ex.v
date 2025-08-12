@@ -20,8 +20,8 @@ module control_bypass_ex(
     input [4:0] idex_rs2,             // Source register 2 address from ID/EX stage
     input [4:0] idex_rd,              // Destination register address from ID/EX stage
     input [1:0] idex_reg_type,        // Type of the register (general or CSR)
-	input [1:0] exmem_reg_type,             // Type of the register (general or CSR)
-	input [1:0] memwb_reg_type,             // Type of the register (general or CSR)
+    input [1:0] exmem_reg_type,             // Type of the register (general or CSR)
+    input [1:0] memwb_reg_type,             // Type of the register (general or CSR)
     input [31:0] idex_rdA,            // Operand A from ID/EX stage
     input [31:0] idex_rdB,            // Operand B from ID/EX stage
     input [31:0] wRegData,            // Writeback data from MEM/WB stage

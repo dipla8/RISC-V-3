@@ -7,7 +7,7 @@
 `endif
 
 /************** control for ALU control in EX pipe stage  *************/
-module control_alu(	output reg [3:0] ALUOp,
+module control_alu(	output reg [4:0] ALUOp,
 					output reg csr_immidiate,
 					input [2:0] ALUcntrl,
 					input [2:0] funct3,

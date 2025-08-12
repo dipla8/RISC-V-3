@@ -18,7 +18,7 @@ module memory_ctrl_d(
 	wire memsig1;
 	memory_d memory_inst(
 	.clk(clk),
-	.address(address>>2),
+	.address(address),
 	.datain(dataout_cache),
 	.ren(miss_cache),
 	.wen(memwr_cache),
@@ -52,8 +52,8 @@ module memory_ctrl_d(
 		if(reset)begin
 			old_address1 <= 32'b0;
 		end
-		if(miss_cache && !memwr_cache)begin
-			if(byte_select_vector[3])
+		if(memsig1 && !memwr_cache)begin
+			/*if(byte_select_vector[3])
 				dataout[31:24] <= dataout_mem[31:24];
 			if(byte_select_vector[2])
 				dataout[23:16] <= dataout_mem[23:16];
@@ -61,6 +61,8 @@ module memory_ctrl_d(
 				dataout[15:8] <= dataout_mem[15:8];
 			if(byte_select_vector[0])
 				dataout[7:0] <= dataout_mem[7:0];
+			*/
+			dataout <=dataout_mem;
 		end
 		if(!memsig1/* && miss_cache*/)begin
 			old_address1 <= address;

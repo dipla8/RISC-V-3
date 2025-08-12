@@ -10,7 +10,7 @@ module ALUCPU #(parameter N = 32) (output [N-1:0] out,
 								output zero,
 								output overflow,
 								input signed [N-1:0] inA, inB,
-								input [3:0] op);
+								input [4:0] op);
 
 /****** SIGNALS ******/
 /****** SIGNALS ******/
@@ -41,13 +41,12 @@ assign {overflow, out_val} = (op == `ADD) ? (inA + inB) :
 	(op == `MULH)	?	{1'b0, (inA * inB)>>32}:
 	(op == `MULHSU)	?	{1'b0, (inA * $unsigned(inB)) >> 32}:
 	(op == `MULHU)	?	{1'b0, ($unsigned(inA) * $unsigned(inB)) >> 32}:
-	(op == `DIV)	?	{1'b0, inA / inB}:
-	(op == `DIVU)	?	{1'b0, $unsigned(inA) / $unsigned(inB)}:
+	//(op == `DIV)	?	{1'b0, inA / inB}:
+	//(op == `DIVU)	?	{1'b0, $unsigned(inA) / $unsigned(inB)}:
 	(op == `REM)	?	{1'b0, inA % inB}:
 	(op == `REMU)	?	{1'b0, $unsigned(inA) % $unsigned(inB)}:
 	(op == `AUIPC) 	? 	(inA + {inB[31:12], 12'b0}) : 33'b0;
 	
 assign zero = (out == 0);
 assign out 	= {{(N-32){out_val[31]}}, out_val[31:0]};
-
 endmodule
