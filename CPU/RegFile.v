@@ -12,12 +12,14 @@
 //                Write port: address wa, data wd, enable wen.
 module RegFile (input clock, reset,
 				input [4:0] raA, raB, wa,
+				input floatingID,
+				input floatingWB,
 				input wen,
 				input [31:0] wd,
 				output [31:0] rdA, rdB);
 /****** SIGNALS ******/
 integer i;
-reg [31:0] data[31:0];
+reg [31:0] data[63:0];
 
 /****** LOGIC ******/
 
@@ -30,13 +32,17 @@ begin
             data[2] <= 256;
     end
 	else begin
-		if (wen == 1'b1 && wa != 5'b0)
+		if (wen == 1'b1 && wa != 5'b0 && floatingWB)begin
+			data[wa+32] <=  wd;
+		end
+		else if (wen == 1'b1 && wa != 5'b0)begin
 			data[wa] <=  wd;
+		end
 	end
     
 end
 
-assign rdA = (wen == 1'b1 && wa == raA && wa != 5'b0) ? wd : data[raA];
-assign rdB = (wen == 1'b1 && wa == raB && wa != 5'b0) ? wd : data[raB];
+assign rdA = (wen == 1'b1 && wa == raA && wa != 5'b0 && floatingWB == floatingID) ? wd : (floating ? data[raA + 32] : data[raA]);
+assign rdB = (wen == 1'b1 && wa == raB && wa != 5'b0 && floatingWB == floatingID) ? wd : (floating ? data[raB + 32] : data[raB]);
 
 endmodule

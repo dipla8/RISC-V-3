@@ -329,6 +329,8 @@ RegFile cpu_regs (
 	.reset(reset),
 	.raA(instr_rs1),
 	.raB(instr_rs2),
+	.floatingID((opcode == `F_FORMAT) || (opcode == `F_LOAD_FORMAT) || (opcode == `F_SAVE_FORMAT))
+	.floatingWB((MEMWB_instr[6:0] == `F_FORMAT) || (MEMWB_instr[6:0] == `F_LOAD_FORMAT) || (MEMWB_instr[6:0] == `F_SAVE_FORMAT))
 	.wa(MEMWB_RegWriteAddr),
 	.wen(MEMWB_RegWrite),
 	.wd(wRegData),
