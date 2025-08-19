@@ -1,18 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Tue Jul 22 08:38:09 2025
+[*] Tue Aug 12 16:37:44 2025
 [*]
-[dumpfile] "/home/kostis/Desktop/riskv3/Testbench/ZSOC.vcd"
-[dumpfile_mtime] "Tue Jul 22 08:37:12 2025"
-[dumpfile_size] 13300354
-[savefile] "/home/kostis/Desktop/riskv3/Testbench/gtkw.gtkw"
+[dumpfile] "/home/kostis/Desktop/riscv3/Testbench/ZSOC.vcd"
+[dumpfile_mtime] "Tue Aug 12 16:37:19 2025"
+[dumpfile_size] 14343445
+[savefile] "/home/kostis/Desktop/riscv3/Testbench/gtkw.gtkw"
 [timestart] 0
 [size] 1848 1016
 [pos] 72 27
-*-6.129734 108 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-4.129734 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test.
 [treeopen] test.top1.
-[treeopen] test.top1.dcache.
+[treeopen] test.top1.cpu1.
 [sst_width] 253
 [signals_width] 214
 [sst_expanded] 1
@@ -71,5 +71,33 @@ test.top1.dcache.cache_inst.datawr[31:0]
 @28
 test.top1.dcache.ren
 test.top1.dcache.wen
+@200
+-
+-DU
+@22
+test.top1.cpu1.DU.rem[31:0]
+test.top1.cpu1.DU.quo[31:0]
+@28
+test.top1.cpu1.DU.sign
+@22
+test.top1.cpu1.DU.inA[31:0]
+test.top1.cpu1.DU.inB[31:0]
+@28
+test.top1.cpu1.DU.ALUOp[4:0]
+@24
+test.top1.cpu1.DU.du_divcy[5:0]
+@23
+test.top1.cpu1.DU.rediv[63:0]
+@200
+-DU control
+-
+-cpu du
+@24
+test.top1.cpu1.local_divcy[5:0]
+test.top1.cpu1.divcy[5:0]
+@22
+test.top1.cpu1.control_stall_id.state[3:0]
+@200
+-
 [pattern_trace] 1
 [pattern_trace] 0

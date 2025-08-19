@@ -43,7 +43,7 @@
 `define DIVU 5'b10011
 `define REM 5'b10100
 `define REMU 5'b10101
-
+`define FADD 1'b1
 
 /********* Opcode Formats *********/
 
@@ -57,7 +57,9 @@
 `define J_FORMAT 7'b1101111
 `define U_FORMAT_LUI 7'b0110111   // U-format
 `define U_FORMAT_AUIPC 7'b0010111 // U-format
-
+`define F_FORMAT 7'b1010011
+`define F_LOAD_FORMAT 7'b0000111
+`define F_SAVE_FORMAT 7'b0100111
 
 /************ Funct3 *************/
 /*********** R-format ************/
@@ -120,14 +122,15 @@
 `define FUNCT7_MUL 7'b0000001
 
 /********* ALUcntrl Codes ********/
-`define ALU_R 3'b000
-`define ALU_LOAD_STORE 3'b001
-`define ALU_BRANCH 3'b010
-`define ALU_LUI    3'b011
-`define ALU_AUIPC  3'b100 
-`define ALU_I_COMP 3'b101
-`define ALU_J      3'b110
-`define ALU_CSR      3'b111
+`define ALU_R 4'b0000
+`define ALU_LOAD_STORE 4'b0001
+`define ALU_BRANCH 4'b0010
+`define ALU_LUI    4'b0011
+`define ALU_AUIPC  4'b0100 
+`define ALU_I_COMP 4'b0101
+`define ALU_J      4'b0110
+`define ALU_CSR      4'b0111
+`define FPU	4'b1000
 
 `define NOP 32'b0000_0000_0000_0000_0000_0000_0000_0000
 

@@ -25,6 +25,7 @@ module CSRFile (input clock,
                 input software_interrupt,
                 input external_interrupt,
                 input syscall,
+		input [4:0] fpflags,
                 output reg int_taken,
                 output reg trap_in_ID,
                 output reg flushPipeline,
@@ -58,6 +59,8 @@ reg [31:0] mepc;    // Machine exception program counter register address 0x341
 reg [31:0] mcause;  // Machine cause register address 0x342
 reg [31:0] mtval;   // Machine trap value register address 0x343
 wire [31:0] mip;     // Machine interrupt pending register address 0x344
+
+reg [7:0] fcsr; // FP CSR, reserved bits are missing, only rounding mode and flags are in place
 // reg [63:0] mcycle; //maybe?
 assign mip = {16'b0,4'b0,external_interrupt,3'b0,timer_interrupt,3'b0,software_interrupt,3'b0}; 
 
@@ -85,6 +88,7 @@ begin
         trap_vector <= 32'b0;
         enableInterrupts <= 3'b111;
         flushPipeline <= 1'b0;
+	fcsr <= 8'b0;
         pipeline_flush_count <= FLUSH_COUNT;
     end
     else

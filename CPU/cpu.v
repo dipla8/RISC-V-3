@@ -64,7 +64,7 @@ reg		[6:0]	IDEX_funct7;
 reg		[4:0]	IDEX_instr_rs2, IDEX_instr_rs1, IDEX_instr_rd;
 reg				IDEX_RegDst, IDEX_ALUSrc, IDEX_inA_is_PC, IDEX_Jump, IDEX_JumpJALR;
 reg 	[1:0] 	IDEX_reg_type;
-reg		[2:0]	IDEX_ALUcntrl;
+reg		[2:0]	IDEX_EXcntrl;
 reg				IDEX_MemRead, IDEX_MemWrite;
 reg				IDEX_MemToReg, IDEX_RegWrite;
 reg 	[2:0]	EXMEM_funct3, MEMWB_funct3;
@@ -96,7 +96,7 @@ reg				IDEX_Branch, EXMEM_Branch;
 wire			bubble_ifid, bubble_idex, bubble_exmem, bubble_memwb;   // create a NOP in respective stages
 wire			write_ifid, write_idex, write_exmem, write_memwb, write_pc;  // enable/disable pipeline registers
 wire	[6:0]	opcode;
-wire	[2:0]	funct3, ALUcntrl; 
+wire	[2:0]	funct3, EXcntrl; 
 // csr registers
 
 // csr file output
@@ -125,6 +125,7 @@ wire [5:0] divcy;
 wire	[6:0]	funct7;
 wire	[4:0]	instr_rs1, instr_rs2, instr_rd, RegWriteAddr;
 wire	[4:0]	ALUOp;
+wire 	[1:0]	FPUOp; // one bit long thus far, improvements will be added
 wire	[1:0]	bypassA, bypassB;
 wire	[31:0]	imm_i, imm_s, imm_b, imm_u, imm_j, imm_z;
 reg keepDelayInstr=0;
@@ -329,8 +330,8 @@ RegFile cpu_regs (
 	.reset(reset),
 	.raA(instr_rs1),
 	.raB(instr_rs2),
-	.floatingID((opcode == `F_FORMAT) || (opcode == `F_LOAD_FORMAT) || (opcode == `F_SAVE_FORMAT))
-	.floatingWB((MEMWB_instr[6:0] == `F_FORMAT) || (MEMWB_instr[6:0] == `F_LOAD_FORMAT) || (MEMWB_instr[6:0] == `F_SAVE_FORMAT))
+	.floatingID(reg_type == 2'b10),
+	.floatingWB(MEMWB_reg_type == 2'b10),
 	.wa(MEMWB_RegWriteAddr),
 	.wen(MEMWB_RegWrite),
 	.wd(wRegData),
@@ -366,7 +367,7 @@ begin
 		IDEX_instr_rs1	<= 5'b0;
 		IDEX_instr_rs2	<= 5'b0;
 		IDEX_RegDst		<= 1'b0;
-		IDEX_ALUcntrl	<= 3'b0;
+		IDEX_EXcntrl	<= 3'b0;
 		IDEX_ALUSrc		<= 1'b0;
 		IDEX_Branch		<= 1'b0;
 		IDEX_MemRead	<= 1'b0;
@@ -394,7 +395,7 @@ begin
 			IDEX_instr_rs1	<= 5'b0;
 			IDEX_instr_rs2	<= 5'b0;
 			IDEX_RegDst		<= 1'b0;
-			IDEX_ALUcntrl	<= 3'b0;
+			IDEX_EXcntrl	<= 3'b0;
 			IDEX_ALUSrc		<= 1'b0;
 			IDEX_Branch		<= 1'b0;
 			IDEX_MemRead	<= 1'b0;
@@ -420,7 +421,7 @@ begin
 			IDEX_instr_rs1	<= instr_rs1;
 			IDEX_instr_rs2	<= instr_rs2;
 			IDEX_RegDst		<= RegDst;
-			IDEX_ALUcntrl	<= ALUcntrl;
+			IDEX_EXcntrl	<= EXcntrl;
 			IDEX_ALUSrc		<= ALUSrc;
 			IDEX_Branch		<= Branch;
 			IDEX_MemRead	<= MemRead;
@@ -579,7 +580,7 @@ control_main control_main (
 	.Jump(Jump),
 	.JumpJALR(JumpJALR),
 	.inA_is_PC(inA_is_PC),
-	.ALUcntrl(ALUcntrl),
+	.EXcntrl(EXcntrl),
 	.opcode(opcode)
 );
 wire [31:0] div_rdA, div_rdB;
@@ -650,6 +651,8 @@ ALUCPU cpu_alu(
 	.op(ALUOp)
 );
 assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
+/*fp_unit FPU(
+);*/
 // DIVISION UNIT
 division_unit DU(
 	.clk(clock),
@@ -719,7 +722,7 @@ begin
 			EXMEM_instr			<= 32'b0;
 		end 
 		else if (write_exmem == 1'b1) begin
-			EXMEM_ALUOut		<= divres ? divres : ALUOut;
+			EXMEM_ALUOut		<= divres ? divres : /*(IDEX_reg_type == 2b'10) ? FPUOut :*/ALUOut;
 			EXMEM_JumpJALR		<= IDEX_JumpJALR;
 			EXMEM_BranchALUOut	<= BranchALUOut;
 			EXMEM_RegWriteAddr	<= RegWriteAddr;
@@ -743,9 +746,10 @@ end
 
 // ALU control unit
 // Determines the ALU operation based on the instruction
-control_alu control_alu(
-	.ALUOp(ALUOp), 
-	.ALUcntrl(IDEX_ALUcntrl), 
+control_ex control_ex(
+	.ALUOp(ALUOp),
+	.FPUOp(FPUOp), 
+	.EXcntrl(IDEX_EXcntrl), 
 	.csr_immidiate(csr_immidiate),
 	.funct3(IDEX_funct3), 
 	.funct7(IDEX_funct7)

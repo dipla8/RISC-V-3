@@ -42,7 +42,7 @@ begin
     
 end
 
-assign rdA = (wen == 1'b1 && wa == raA && wa != 5'b0 && floatingWB == floatingID) ? wd : (floating ? data[raA + 32] : data[raA]);
-assign rdB = (wen == 1'b1 && wa == raB && wa != 5'b0 && floatingWB == floatingID) ? wd : (floating ? data[raB + 32] : data[raB]);
+assign rdA = (wen == 1'b1 && wa == raA && wa != 5'b0 && floatingWB == floatingID) ? wd : (floatingID ? data[raA + 32] : data[raA]);
+assign rdB = (wen == 1'b1 && wa == raB && wa != 5'b0 && floatingWB == floatingID) ? wd : (floatingID ? data[raB + 32] : data[raB]);
 
 endmodule

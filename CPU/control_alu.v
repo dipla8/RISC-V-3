@@ -7,16 +7,19 @@
 `endif
 
 /************** control for ALU control in EX pipe stage  *************/
-module control_alu(	output reg [4:0] ALUOp,
+module control_ex(			
+					output reg [4:0] ALUOp,
+					output reg [1:0] FPUOp, // to be extended
 					output reg csr_immidiate,
-					input [2:0] ALUcntrl,
+					input [2:0] EXcntrl,
 					input [2:0] funct3,
 					input [6:0] funct7);
 
-always @(ALUcntrl or funct3 or funct7)
+always @(EXcntrl or funct3 or funct7)
 begin
 	csr_immidiate = 0;
-	case (ALUcntrl)
+	FPUOp = 0;
+	case (EXcntrl)
 		`ALU_R: begin
 			case ({funct7, funct3})
 				{`FUNCT7_ADD,`FUNCT3_ADD_SUB}:	ALUOp = `ADD;
@@ -39,6 +42,10 @@ begin
 				{`FUNCT7_MUL, `FUNCT3_REMU}: ALUOp = `REMU;
 				default: ALUOp = `ADD;
 			endcase
+		end
+		`FPU: begin
+			ALUOp = `ADD;
+			FPUOp = `FADD;
 		end
 		`ALU_LOAD_STORE: begin
 			ALUOp  = `ADD;
