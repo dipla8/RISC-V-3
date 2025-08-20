@@ -431,8 +431,10 @@ begin
 			IDEX_funct3	<= funct3;
 			IDEX_funct7	<= funct7;
 			IDEX_PC		<= IFID_PC;
-			IDEX_rdA	<= rdA;
-			IDEX_rdB	<= rdB;
+			IDEX_rdA	<= ((reg_type == 2'b10) && ((rdB[30:23] == 8'hFF) && (rdA[30:23] != 8'hFF))) ? 0 : rdA;
+			IDEX_rdB	<= ((reg_type == 2'b10) && (rdA[30:23] == 8'hFF)) ? 0 : rdB;
+			// if the exponent is NaN or +-infinity then to propagate the value, turn the other to zero
+			// if both are NaN or inf, then keep just one (the extra condition for rdA)
 			IDEX_reg_type	<= reg_type;
 			IDEX_instr		<= IFID_instr;
 			IDEX_csr_addr	<= csr_addr;
