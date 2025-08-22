@@ -27,6 +27,8 @@ begin
 		`J_FORMAT:		out = imm_j;
 		`U_FORMAT_AUIPC,
 		`U_FORMAT_LUI:	out = imm_u;
+		`F_LOAD_FORMAT: out = imm_i;
+		`F_SAVE_FORMAT: out = imm_i;
 		default:		out = 32'b0;
 	endcase
 end

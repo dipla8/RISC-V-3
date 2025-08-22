@@ -331,7 +331,10 @@ RegFile cpu_regs (
 	.raA(instr_rs1),
 	.raB(instr_rs2),
 	.floatingID(reg_type == 2'b10),
-	.floatingWB(MEMWB_reg_type == 2'b10),
+	.floatingWB((MEMWB_reg_type == 2'b10) || (MEMWB_reg_type == 2'b11)),
+	// load and store instructions access the integer regfile
+	// when reading and the fp regfile when storing
+	// the regtype 11 is subsequently indicating exactly that
 	.wa(MEMWB_RegWriteAddr),
 	.wen(MEMWB_RegWrite),
 	.wd(wRegData),
@@ -653,8 +656,12 @@ ALUCPU cpu_alu(
 	.op(ALUOp)
 );
 assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
-/*fp_unit FPU(
-);*/
+fpu FPU(
+	.op(FPUOp),
+	.inA(ALUInA),
+	.inB(ALUInB),
+	.out(FPUOut)
+);
 // DIVISION UNIT
 division_unit DU(
 	.clk(clock),
@@ -724,7 +731,7 @@ begin
 			EXMEM_instr			<= 32'b0;
 		end 
 		else if (write_exmem == 1'b1) begin
-			EXMEM_ALUOut		<= divres ? divres : /*(IDEX_reg_type == 2b'10) ? FPUOut :*/ALUOut;
+			EXMEM_ALUOut		<= divres ? divres : ((IDEX_reg_type == 2'b10) ? FPUOut : ALUOut);
 			EXMEM_JumpJALR		<= IDEX_JumpJALR;
 			EXMEM_BranchALUOut	<= BranchALUOut;
 			EXMEM_RegWriteAddr	<= RegWriteAddr;

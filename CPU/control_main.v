@@ -173,7 +173,7 @@ begin
 			EXcntrl		= `FPU;
 		end
 		`F_LOAD_FORMAT: begin 
-			reg_type 	= 2'b10; // FP registers
+			reg_type 	= 2'b11; // FP registers
 			RegDst		= 1'b1;
 			MemRead		= 1'b1;
 			MemWrite	= 1'b0;
@@ -187,7 +187,7 @@ begin
 			EXcntrl	= `ALU_LOAD_STORE;
 		end
 		`F_SAVE_FORMAT: begin 
-			reg_type 	= 2'b10; // FP registers
+			reg_type 	= 2'b11; // FP registers
 			RegDst		= 1'b0;
 			MemRead		= 1'b0;
 			MemWrite	= 1'b1;
