@@ -64,7 +64,7 @@ reg		[6:0]	IDEX_funct7;
 reg		[4:0]	IDEX_instr_rs2, IDEX_instr_rs1, IDEX_instr_rd;
 reg				IDEX_RegDst, IDEX_ALUSrc, IDEX_inA_is_PC, IDEX_Jump, IDEX_JumpJALR;
 reg 	[1:0] 	IDEX_reg_type;
-reg		[2:0]	IDEX_EXcntrl;
+reg		[3:0]	IDEX_EXcntrl;
 reg				IDEX_MemRead, IDEX_MemWrite;
 reg				IDEX_MemToReg, IDEX_RegWrite;
 reg 	[2:0]	EXMEM_funct3, MEMWB_funct3;
@@ -96,7 +96,7 @@ reg				IDEX_Branch, EXMEM_Branch;
 wire			bubble_ifid, bubble_idex, bubble_exmem, bubble_memwb;   // create a NOP in respective stages
 wire			write_ifid, write_idex, write_exmem, write_memwb, write_pc;  // enable/disable pipeline registers
 wire	[6:0]	opcode;
-wire	[2:0]	funct3, EXcntrl; 
+wire	[3:0]	funct3, EXcntrl; 
 // csr registers
 
 // csr file output
@@ -434,7 +434,7 @@ begin
 			IDEX_funct3	<= funct3;
 			IDEX_funct7	<= funct7;
 			IDEX_PC		<= IFID_PC;
-			IDEX_rdA	<= ((reg_type == 2'b10) && ((rdB[30:23] == 8'hFF) && (rdA[30:23] != 8'hFF))) ? 0 : rdA;
+			IDEX_rdA	<= ((reg_type == 2'b10) && (rdA[30:23] == 8'hFF)) ? (rdB[30:23]!= 8`hFF ? 0:rdA) : rdA;
 			IDEX_rdB	<= ((reg_type == 2'b10) && (rdA[30:23] == 8'hFF)) ? 0 : rdB;
 			// if the exponent is NaN or +-infinity then to propagate the value, turn the other to zero
 			// if both are NaN or inf, then keep just one (the extra condition for rdA)
@@ -656,10 +656,10 @@ ALUCPU cpu_alu(
 	.op(ALUOp)
 );
 assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
-fpu FPU(
+fpu_adder FPU(
 	.op(FPUOp),
-	.inA(ALUInA),
-	.inB(ALUInB),
+	.number1(ALUInA),
+	.number2(ALUInB),
 	.out(FPUOut)
 );
 // DIVISION UNIT
@@ -670,8 +670,8 @@ division_unit DU(
 	.cpu_divcy(local_divcy),
 	.du_divcy(divcy),
 	.trapdiv(trapdiv),
-	.inA(IDEX_rdA),
-	.inB(IDEX_rdB),
+	.inA(ALUInA), //otherwise IDEX_rdA
+	.inB(ALUInB), // otherwise IDEX_rdB
 	.rem(divrem),
 	.quo(divres)	
 );
@@ -875,7 +875,7 @@ mem_read_selector mem_read_selector(
 	.out(MemOut)
 );
 always @(*) begin
-	if (MEMWB_reg_type == 0) begin
+	if (MEMWB_reg_type != 2'b01) begin
 		// if we are not writing to memory get the data from the ALU
 		if (MEMWB_MemToReg == 1'b0) begin
 			wRegData = MEMWB_ALUOut;

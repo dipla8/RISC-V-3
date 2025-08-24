@@ -59,19 +59,7 @@ end
 
 // Determine bypassing logic for Operand B
 always @(*) begin
-	case(idex_reg_type)
-	2'b00:begin
-		if (exmem_regwrite == 1'b1 && exmem_rd == idex_rs2) begin
-			bypassB = 2'b10; // Forward data from EX/MEM stage
-		end
-		else if (memwb_regwrite == 1'b1 && memwb_rd == idex_rs2) begin
-			bypassB = 2'b01; // Forward data from MEM/WB stage
-		end
-		else begin
-			bypassB = 2'b00; // No forwarding, use ID/EX stage value
-		end
-	end
-	2'b01:begin
+	if(idex_reg_type == 2'b01)begin
 		if (exmem_regwrite == 1'b1 && exmem_rd != 5'b0 && exmem_csr_addr == idex_csr_addr) begin
 			bypassB = 2'b10; // Forward data from EX/MEM stage
 		end
@@ -82,10 +70,17 @@ always @(*) begin
 			bypassB = 2'b00; // No forwarding, use ID/EX stage value
 		end
 	end
-	default:begin
+	else begin
+	if (exmem_regwrite == 1'b1 && exmem_rd == idex_rs2 && exmem_reg_type == idex_reg_type) begin
+		bypassB = 2'b10; // Forward data from EX/MEM stage
+	end
+	else if (memwb_regwrite == 1'b1 && memwb_rd == idex_rs2 && ((memwb_reg_type == idex_reg_type) ||((memwb_reg_type == 2'b11) && (idex_reg_type == 2'b10)))) begin
+		bypassB = 2'b01; // Forward data from MEM/WB stage
+	end
+	else begin
 		bypassB = 2'b00; // No forwarding, use ID/EX stage value
 	end
-	endcase
+	end
 end
 
 // Select the correct source for Operand A based on bypass logic

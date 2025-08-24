@@ -19,7 +19,7 @@ module control_main(output reg RegDst,
 					output reg JumpJALR,
 					output reg inA_is_PC,
 					output reg [1:0] reg_type,
-					output reg [2:0] EXcntrl,
+					output reg [3:0] EXcntrl,
 					input [6:0] opcode);
 
 always @(*)

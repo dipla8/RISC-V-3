@@ -73,9 +73,9 @@ begin
 		end
 		else begin
 			// instr_en	= 1'b0;
-			write_memwb		= 1'b0;
-			write_exmem		= 1'b0;
-			write_idex		= 1'b0;
+			write_memwb		= 1'b0; // changed from 0
+			write_exmem		= 1'b0; // changed from 0
+			write_idex		= 1'b0; // changed from 0
 			write_ifid		= 1'b0;
 			write_pc		= 1'b0;
 			trap_waiting	= 1'b0;
