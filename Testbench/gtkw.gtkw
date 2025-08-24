@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Tue Aug 12 16:37:44 2025
+[*] Sun Aug 24 14:58:11 2025
 [*]
 [dumpfile] "/home/kostis/Desktop/riscv3/Testbench/ZSOC.vcd"
-[dumpfile_mtime] "Tue Aug 12 16:37:19 2025"
-[dumpfile_size] 14343445
+[dumpfile_mtime] "Sun Aug 24 14:55:31 2025"
+[dumpfile_size] 3114033
 [savefile] "/home/kostis/Desktop/riscv3/Testbench/gtkw.gtkw"
 [timestart] 0
 [size] 1848 1016
@@ -14,7 +14,7 @@
 [treeopen] test.top1.
 [treeopen] test.top1.cpu1.
 [sst_width] 253
-[signals_width] 214
+[signals_width] 262
 [sst_expanded] 1
 [sst_vpaned_height] 411
 @200
@@ -86,7 +86,7 @@ test.top1.cpu1.DU.inB[31:0]
 test.top1.cpu1.DU.ALUOp[4:0]
 @24
 test.top1.cpu1.DU.du_divcy[5:0]
-@23
+@22
 test.top1.cpu1.DU.rediv[63:0]
 @200
 -DU control
@@ -97,6 +97,16 @@ test.top1.cpu1.local_divcy[5:0]
 test.top1.cpu1.divcy[5:0]
 @22
 test.top1.cpu1.control_stall_id.state[3:0]
+@200
+-
+-FPU
+@22
+test.top1.cpu1.FPU.number1[31:0]
+test.top1.cpu1.FPU.number2[31:0]
+@29
+test.top1.cpu1.FPU.op
+@22
+test.top1.cpu1.FPU.out[31:0]
 @200
 -
 [pattern_trace] 1
