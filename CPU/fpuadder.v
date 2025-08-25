@@ -24,11 +24,11 @@ module fpu_adder(op,number1,number2,out);
 
     //exponent comparison
     assign d = e1-e2;
-    assign expdiff = (d > 0) ? d : -d;
-    assign fexp = (d > 0) ? e1 : e2;
+    assign expdiff = (e1>e2) ? e1-e2 : e2-e1;
+    assign fexp = (e1>e2) ? e1 : e2;
 
-    assign m_small = (d > 0) ? m2 : m1;
-    assign m_large = (d > 0) ? m1 : m2;
+    assign m_small = (e1>e2) ? m2 : m1;
+    assign m_large = (e1>e2) ? m1 : m2;
 
     //sticky bit calculator
     always @(*) begin
@@ -52,9 +52,9 @@ module fpu_adder(op,number1,number2,out);
     //always block to calculate final sign
     always @(*) begin
 	if(op == `FADD)begin
-        if ((s1==s2) || (d>0)) 
+        if ((s1==s2) || (e1>e2)) 
             f_sign = s1;
-        else if (d<0)
+        else if (e1<e2)
             f_sign = s2;
         else begin
             if (m1>m2)
@@ -94,7 +94,7 @@ module fpu_adder(op,number1,number2,out);
     end
 
     //rounding logic
-    assign m_final = (out4[1]&&(out4[2]||out4[0])) ? out4[25:2] + 1 : out4[25:2];
+    assign m_final = (out4[1]&&(out4[2]||out4[0])) ? out4[25:3] + 23'd1 : out4[25:3];
 
     //final number to be output
     assign out = {f_sign,exp4,m_final};
