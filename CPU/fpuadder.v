@@ -12,7 +12,7 @@ module fpu_adder(op,number1,number2,out);
     reg sticky,f_sign,count;
     reg [26:0]out4;
     reg [7:0]exp4;
-    integer i;
+    integer i, c;
 
     //decompose numbers
     assign s1 = number1[31];
@@ -84,9 +84,9 @@ module fpu_adder(op,number1,number2,out);
             end
         end
         else begin
-            for (i=26; (i>=0)&&(adder_out[i]==0);i = i-1) begin
+			for (c=26; (c>=0)&&(adder_out[c]==0);c = c-1) begin
             end
-            count = 26-i;
+            count = 26-c;
             exp4 = fexp - count;
             out4 = adder_out << count;
         end
@@ -100,3 +100,4 @@ module fpu_adder(op,number1,number2,out);
     assign out = {f_sign,exp4,m_final};
     
 endmodule
+
