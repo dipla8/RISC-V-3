@@ -434,8 +434,8 @@ begin
 			IDEX_funct3	<= funct3;
 			IDEX_funct7	<= funct7;
 			IDEX_PC		<= IFID_PC;
-			IDEX_rdA	<= ((reg_type == 2'b10) && (rdA[30:23] == 8'hFF)) ? (rdB[30:23]!= 8`hFF ? 0:rdA) : rdA;
-			IDEX_rdB	<= ((reg_type == 2'b10) && (rdA[30:23] == 8'hFF)) ? 0 : rdB;
+			IDEX_rdA	<= rdA;
+			IDEX_rdB	<= rdB;
 			// if the exponent is NaN or +-infinity then to propagate the value, turn the other to zero
 			// if both are NaN or inf, then keep just one (the extra condition for rdA)
 			IDEX_reg_type	<= reg_type;
@@ -658,8 +658,8 @@ ALUCPU cpu_alu(
 assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
 fpu_adder FPU(
 	.op(FPUOp),
-	.number1(ALUInA),
-	.number2(ALUInB),
+	.number1((ALUInA[30:23] == 8'hFF) ? ((ALUInB[30:23]!= 8'hFF) ? 0 : ALUInA) : ALUInA),
+	.number2(ALUInB[30:23] == 8'hFF ? 0 : ALUInB),
 	.out(FPUOut)
 );
 // DIVISION UNIT
