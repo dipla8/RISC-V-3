@@ -57,7 +57,7 @@ wire	[31:0]	BranchInA;
 reg		[31:0]	IDEX_signExtend;
 wire	[31:0]	signExtend;
 wire	[31:0]	rdA, rdB;
-
+wire	[31:0] FPUOut;
 reg		[31:0]	IDEX_rdA, IDEX_rdB;
 reg		[2:0]	IDEX_funct3;
 reg		[6:0]	IDEX_funct7;
