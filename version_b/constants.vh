@@ -1,0 +1,22 @@
+`ifndef DECODE_CONSTANTS
+`define DECODE_CONSTANTS
+
+/******** 8 SEGMENT DISPLAY (MSB) ********/
+`define ZERO 8'b00111111
+`define ONE 8'b00000110
+`define TWO 8'b01011011
+`define THREE 8'b01001111
+`define FOUR 8'b01100110
+`define FIVE 8'b01101101
+`define SIX 8'b01111101
+`define SEVEN 8'b00000111
+`define EIGHT 8'b01111111
+`define NINE 8'b01101111
+`define ALPHA 8'b01110111
+`define BETA 8'b01111100
+`define CHARLIE 8'b01111001
+`define DELTA 8'b01011110
+`define ECHO 8'b01111001
+`define FOXTROT 8'b01110001
+`define DEFAULT 8'b01000000
+`endif
