@@ -618,7 +618,8 @@ control_stall_id control_stall_id (
 	.memReady		(memReady),
 	.trapdiv(trapdiv),
 	.divcy((local_divcy != 32)),
-	.PCSrc			(PCSrc));
+	.PCSrc			(PCSrc),
+	.reg_type(reg_type));
 
 /************************ Execution Unit (EX)  ***********************************/
 
