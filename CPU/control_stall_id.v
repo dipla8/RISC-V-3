@@ -99,7 +99,7 @@ begin
 		instr_en	= 1'b0;
 		trap_waiting= 1'b0;
 	end
-	else if ((idex_memread == 1'b1) && ((idex_rd==ifid_rs) || ((idex_rd==ifid_rt)/* && reg_type == 2'b00 */))) begin // Load stall
+	else if ((idex_memread == 1'b1) && ((idex_rd==ifid_rs) || ((idex_rd==ifid_rt) && reg_type != 2'b11 ))) begin // Load stall
 		state = 4'd4;
 		bubble_idex	= 1'b1;
 		write_ifid	= 1'b0;
