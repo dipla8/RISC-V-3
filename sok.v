@@ -46,7 +46,7 @@ module top();
 		.external_interrupt(mext_irq),
 		.instr_en(instr_en),
 		.write_pc_out(write_pc),
-		.memReady(memReady1 && memReady2)
+		.memReady(memReady1/* && memReady2*/)
 	);
 	memory_ctrl_i icache(
 	.clk(cpu_clk),
