@@ -43,7 +43,32 @@
 `define DIVU 5'b10011
 `define REM 5'b10100
 `define REMU 5'b10101
-`define FADD 1'b1
+`define FADD 5'b00000
+`define FSUB 5'b00001
+`define FMADD 5'b00010
+`define FMSUB 5'b00011
+`define FNMSUB 5'b00100
+`define FNMADD 5'b00101
+`define FMUL 5'b00110
+`define FDIV 5'b00111
+`define FSQRT 5'b01000
+`define FSGNJ 5'b01001
+`define FSGNJN 5'b01010
+`define FSGNJX 5'b01011
+`define FMIN 5'b01100
+`define FMAX 5'b01101 
+`define FCVTWS 5'b01110
+`define FCVTWUS 5'b01111
+`define FMVXW 5'b10000
+`define FEQ 5'b10001
+`define FLT 5'b10010
+`define FLE 5'b10011
+`define FCLASS 5'b10100
+`define FCVTSW 5'b10101
+`define FCVTSWU 5'b10110
+`define FMVWX 5'b10111
+
+
 
 /********* Opcode Formats *********/
 
@@ -60,6 +85,10 @@
 `define F_FORMAT 7'b1010011
 `define F_LOAD_FORMAT 7'b0000111
 `define F_SAVE_FORMAT 7'b0100111
+`define F_M_ADD_FORMAT 7'b1000011
+`define F_M_SUB_FORMAT 7'b1000111
+`define F_N_M_SUB_FORMAT 7'b1001011
+`define F_N_M_ADD_FORMAT 7'b1001111
 
 /************ Funct3 *************/
 /*********** R-format ************/
@@ -115,11 +144,39 @@
 `define FUNCT3_CSRRSI 3'b110 // CSR Read and Set Immediate
 `define FUNCT3_CSRRCI 3'b111 // CSR Read and Clear Immediate
 
-
+/********* FPU Instructions *************/
+`define FUNCT3_FSGNJ 3'b000
+`define FUNCT3_FSGNJN 3'b001
+`define FUNCT3_FSGNJX 3'b010
+`define FUNCT3_FMIN 3'b000
+`define FUNCT3_FMAX 3'b001
+`define FUNCT3_FMVXW 3'b00
+`define FUNCT3_FEQ 3'b010
+`define FUNCT3_FLT 3'b001
+`define FUNCT3_FLE 3'b000
+`define FUNCT3_FCLASS 3'b001
+// ?
+`define FUNCT5_FCVTWS 5'b00000
+`define FUNCT5_FCVTWUS 5'b00001
+`define FUNCT5_FCLASS 5'b00000
+`define FUNCT5_FCVTSW 5'b00000
+`define FUNCT5_FCVTSWU 5'b00001
 /******* Funct7, R-format ********/
-`define FUNCT7_ADD 7'h00
+`define FUNCT7_ADD 7'b0000000
 `define FUNCT7_SUB 7'b0100000
 `define FUNCT7_MUL 7'b0000001
+`define FUNCT7_FSUB 7'b0000100
+`define FUNCT7_FMUL 7'b0001000
+`define FUNCT7_FDIV 7'b0001100
+`define FUNCT7_FSQRT 7'b0101100
+`define FUNCT7_FSIGN 7'b0010000
+`define FUNCT7_FMINMAX 7'b0010100
+`define FUNCT7_FCVTWS 7'b1100000
+`define FUNCT7_FMVXW 7'b1110000
+`define FUNCT7_FCLASS 7'b1110000
+`define FUNCT7_FCVTSW 7'b1101000
+`define FUNCT7_FEQ 7'b1010000
+`define FUNCT7_FMVWX 7'b1111000
 
 /********* ALUcntrl Codes ********/
 `define ALU_R 4'b0000
@@ -138,5 +195,6 @@
 `define BNE_CODE 2'b01
 `define BLT_CODE 2'b10
 `define BGE_CODE 2'b11
+
 
 `endif

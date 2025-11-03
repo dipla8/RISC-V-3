@@ -18,8 +18,9 @@ module control_main(output reg RegDst,
 					output reg Jump,
 					output reg JumpJALR,
 					output reg inA_is_PC,
-					output reg [1:0] reg_type,
+					output reg [2:0] reg_type,
 					output reg [3:0] EXcntrl,
+					input [6:0] funct7,
 					input [6:0] opcode);
 
 always @(*)
@@ -66,7 +67,7 @@ begin
 			EXcntrl	= `ALU_LOAD_STORE;
 		end
 		`I_ENV_FORMAT: 	begin
-			reg_type 	= 2'b01; // sets registers to CSR registers
+			reg_type 	= 3'b001; // sets registers to CSR registers
 			RegDst		= 1'b1;
 			MemRead		= 1'b0;
 			MemWrite	= 1'b0;
@@ -158,8 +159,12 @@ begin
 			inA_is_PC	= 1'b1;
 			EXcntrl	= `ALU_AUIPC;
 		end
+		`F_M_ADD_FORMAT,
+		`F_M_SUB_FORMAT,
+		`F_N_M_SUB_FORMAT,
+		`F_N_M_ADD_FORMAT,
 		`F_FORMAT: begin 
-			reg_type 	= 2'b10; // FP registers
+			reg_type 	= funct7 == `FUNCT7_FEQ ? 3'b100 : funct7==`FUNCT7_FCVTWS ? 3'b100 : funct7==`FUNCT7_FMVXW ? 3'b100 : funct7==`FUNCT7_FCLASS ? 3'b100: funct7==`FUNCT7_FCVTSW ? 3'b101 : funct7==`FUNCT7_FMVWX ? 3'b101 : 3'b010; // FP registers
 			RegDst		= 1'b1;
 			MemRead		= 1'b0;
 			MemWrite	= 1'b0;
@@ -173,7 +178,7 @@ begin
 			EXcntrl		= `FPU;
 		end
 		`F_LOAD_FORMAT: begin 
-			reg_type 	= 2'b11; // FP registers
+			reg_type 	= 3'b011; // FP registers
 			RegDst		= 1'b1;
 			MemRead		= 1'b1;
 			MemWrite	= 1'b0;
@@ -187,7 +192,7 @@ begin
 			EXcntrl	= `ALU_LOAD_STORE;
 		end
 		`F_SAVE_FORMAT: begin 
-			reg_type 	= 2'b11; // FP registers
+			reg_type 	= 3'b011; // FP registers
 			RegDst		= 1'b0;
 			MemRead		= 1'b0;
 			MemWrite	= 1'b1;

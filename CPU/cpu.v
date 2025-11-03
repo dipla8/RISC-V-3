@@ -63,7 +63,7 @@ reg		[2:0]	IDEX_funct3;
 reg		[6:0]	IDEX_funct7;
 reg		[4:0]	IDEX_instr_rs2, IDEX_instr_rs1, IDEX_instr_rd;
 reg				IDEX_RegDst, IDEX_ALUSrc, IDEX_inA_is_PC, IDEX_Jump, IDEX_JumpJALR;
-reg 	[1:0] 	IDEX_reg_type;
+reg 	[2:0] 	IDEX_reg_type;
 reg		[3:0]	IDEX_EXcntrl;
 reg				IDEX_MemRead, IDEX_MemWrite;
 reg				IDEX_MemToReg, IDEX_RegWrite;
@@ -71,7 +71,7 @@ reg 	[2:0]	EXMEM_funct3, MEMWB_funct3;
 reg 	[4:0]	EXMEM_RegWriteAddr;
 reg 	[31:0]	EXMEM_ALUOut;
 reg 	[31:0]	EXMEM_BranchALUOut;
-reg 	[1:0] 	EXMEM_reg_type;
+reg 	[2:0] 	EXMEM_reg_type;
 reg				EXMEM_Zero, EXMEM_JumpJALR;
 wire		[3:0]	byte_select_vector;
 reg		[31:0]	EXMEM_MemWriteData;
@@ -81,7 +81,7 @@ reg		[31:0]	MEMWB_DMemOut;
 reg		[4:0]	MEMWB_RegWriteAddr;
 reg		[31:0]	MEMWB_ALUOut;
 reg				MEMWB_MemToReg, MEMWB_RegWrite;
-reg 	[1:0] 	MEMWB_reg_type;
+reg 	[2:0] 	MEMWB_reg_type;
 // alu signals
 reg 	[31:0] 	ALUInA, ALUInB;
 wire 	[31:0] 	bypassOutA, bypassOutB;
@@ -90,7 +90,7 @@ wire	[31:0]	divrem, divres;
 reg     [31:0]  wRegData;
 reg     [31:0]  WB_csr_data;
 wire			Zero, RegDst, MemRead, MemWrite, MemToReg, ALUSrc, PCSrc, RegWrite, Jump, JumpJALR;
-wire 	[1:0] 	reg_type; // used to determin if we are using the x0-x31 registers, csr registers or f1-f32 registers. 0->x register 1->csr register 2->f register 
+wire 	[2:0] 	reg_type; // used to determin if we are using the x0-x31 registers, csr registers or f1-f32 registers. 0->x register 1->csr register 2->f register 
 wire			Branch;
 reg				IDEX_Branch, EXMEM_Branch;
 wire			bubble_ifid, bubble_idex, bubble_exmem, bubble_memwb;   // create a NOP in respective stages
@@ -125,7 +125,7 @@ wire [5:0] divcy;
 wire	[6:0]	funct7;
 wire	[4:0]	instr_rs1, instr_rs2, instr_rd, RegWriteAddr;
 wire	[4:0]	ALUOp;
-wire 	[1:0]	FPUOp; // one bit long thus far, improvements will be added
+wire 	[4:0]	FPUOp; // one bit long thus far, improvements will be added
 wire	[1:0]	bypassA, bypassB;
 wire	[31:0]	imm_i, imm_s, imm_b, imm_u, imm_j, imm_z;
 reg keepDelayInstr=0;
@@ -293,7 +293,7 @@ assign instr_rd		= IFID_instr[11:7];
 assign syscall		= (IDEX_Jump==1'b0 & 
 						IDEX_JumpJALR==1'b0&opcode == `I_ENV_FORMAT & funct3==0) ? 1'b1 : 1'b0;
 always @(*) begin
-	if(reg_type == 2'b01) begin
+	if(reg_type == 3'b001) begin
 		if(funct3[1:0] == 2'b00) begin
 			csr_write_allowed = 1'b0;
 		end
@@ -330,8 +330,8 @@ RegFile cpu_regs (
 	.reset(reset),
 	.raA(instr_rs1),
 	.raB(instr_rs2),
-	.floatingID(reg_type == 2'b10),
-	.floatingWB((MEMWB_reg_type == 2'b10) || (MEMWB_reg_type == 2'b11)),
+	.floatingID(reg_type == 3'b010 || reg_type == 3'b100),
+	.floatingWB((MEMWB_reg_type == 3'b010) || (MEMWB_reg_type == 3'b011) || MEMWB_reg_type == 3'b101),
 	// load and store instructions access the integer regfile
 	// when reading and the fp regfile when storing
 	// the regtype 11 is subsequently indicating exactly that
@@ -552,7 +552,7 @@ CSRFile csrFile(
 	.clock(clock),
 	.reset(reset),
 	.wen(MEMWB_csr_write_allowed),
-	.ren(reg_type==2'b01),
+	.ren(reg_type==3'b001),
 	.csrAddr(csr_addr),
 	.csrWAddr(MEMWB_csr_addr),
 	.wd(WB_csr_data),
@@ -657,8 +657,8 @@ ALUCPU cpu_alu(
 	.op(ALUOp)
 );
 assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
-fpu_adder FPU(
-	.op(FPUOp),
+fpu FPU(
+	.FPUOp(FPUOp),
 	.number1((ALUInA[30:23] == 8'hFF) ? ((ALUInB[30:23]!= 8'hFF) ? 0 : ALUInA) : ALUInA),
 	.number2(ALUInB[30:23] == 8'hFF ? 0 : ALUInB),
 	.out(FPUOut)
@@ -703,7 +703,7 @@ begin
 		EXMEM_RegWrite		<= 1'b0;
 		EXMEM_funct3		<= 3'b0;
 		EXMEM_csr_data		<= 32'b0;
-		EXMEM_reg_type		<= 2'b00;
+		EXMEM_reg_type		<= 3'b000;
 		EXMEM_csr_addr		<= 12'b0;
 		EXMEM_csr_write_allowed <= 1'b0;
 		EXMEM_PC			<= 32'hffffffff;
@@ -725,14 +725,14 @@ begin
 			EXMEM_RegWrite		<= 1'b0;
 			EXMEM_funct3		<= 3'b0;
 			EXMEM_csr_data		<= 32'b0;
-			EXMEM_reg_type		<= 2'b00;
+			EXMEM_reg_type		<= 3'b000;
 			EXMEM_csr_addr		<= 12'b0;
 			EXMEM_csr_write_allowed <= 1'b0;
 			EXMEM_PC			<= 32'hffffffff;
 			EXMEM_instr			<= 32'b0;
 		end 
 		else if (write_exmem == 1'b1) begin
-			EXMEM_ALUOut		<= divres ? divres : ((IDEX_reg_type == 2'b10) ? FPUOut : ALUOut);
+			EXMEM_ALUOut		<= divres ? divres : ((IDEX_reg_type == 3'b010) ? FPUOut : ALUOut);
 			EXMEM_JumpJALR		<= IDEX_JumpJALR;
 			EXMEM_BranchALUOut	<= BranchALUOut;
 			EXMEM_RegWriteAddr	<= RegWriteAddr;
@@ -761,6 +761,7 @@ control_ex control_ex(
 	.FPUOp(FPUOp), 
 	.EXcntrl(IDEX_EXcntrl), 
 	.csr_immidiate(csr_immidiate),
+	.rs2(IDEX_instr_rs2),
 	.funct3(IDEX_funct3), 
 	.funct7(IDEX_funct7)
 );
@@ -818,7 +819,7 @@ begin
 		MEMWB_RegWrite		<= 1'b0;
 		MEMWB_funct3		<= 3'b0;
 		MEMWB_csr_data		<= 32'b0;
-		MEMWB_reg_type		<= 2'b00;
+		MEMWB_reg_type		<= 3'b000;
 		MEMWB_csr_addr		<= 12'b0;
 		MEMWB_csr_write_allowed <= 1'b0;
 		MEMWB_PC			<= 32'b0;
@@ -834,7 +835,7 @@ begin
 			MEMWB_RegWrite		<= 1'b0;
 			MEMWB_funct3		<= 3'b0;
 			MEMWB_csr_data		<= 32'b0;
-			MEMWB_reg_type		<= 2'b00;
+			MEMWB_reg_type		<= 3'b000;
 			MEMWB_csr_addr		<= 12'b0;
 			MEMWB_csr_write_allowed <= 1'b0;
 			MEMWB_PC			<= 32'hffffffff;
@@ -876,7 +877,7 @@ mem_read_selector mem_read_selector(
 	.out(MemOut)
 );
 always @(*) begin
-	if (MEMWB_reg_type != 2'b01) begin
+	if (MEMWB_reg_type != 3'b001) begin
 		// if we are not writing to memory get the data from the ALU
 		if (MEMWB_MemToReg == 1'b0) begin
 			wRegData = MEMWB_ALUOut;

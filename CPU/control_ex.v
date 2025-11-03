@@ -9,10 +9,11 @@
 /************** control for ALU control in EX pipe stage  *************/
 module control_ex(			
 					output reg [4:0] ALUOp,
-					output reg [1:0] FPUOp, // to be extended
+					output reg [4:0] FPUOp,
 					output reg csr_immidiate,
 					input [3:0] EXcntrl,
 					input [2:0] funct3,
+					input [4:0] rs2, //funct5 for some instructions
 					input [6:0] funct7);
 
 always @(EXcntrl or funct3 or funct7)
@@ -44,8 +45,28 @@ begin
 			endcase
 		end
 		`FPU: begin
+			casex({funct7, funct3})
+				{`FUNCT7_ADD, 3'b???}: FPUOp = `FADD;
+				{`FUNCT7_FSUB, 3'b???}: FPUOp = `FSUB;
+				{`FUNCT7_FMUL, 3'b???}: FPUOp = `FMUL;
+				{`FUNCT7_FDIV, 3'b???}: FPUOp = `FDIV;
+				{`FUNCT7_FSQRT, 3'b???}: FPUOp = `FSQRT;
+				{`FUNCT7_FSIGN, `FUNCT3_FSGNJ}: FPUOp = `FSGNJ;
+				{`FUNCT7_FSIGN, `FUNCT3_FSGNJN}: FPUOp = `FSGNJN;
+				{`FUNCT7_FSIGN, `FUNCT3_FSGNJX}: FPUOp = `FSGNJX;
+				{`FUNCT7_FMINMAX, `FUNCT3_FMIN}: FPUOp = `FMIN;
+				{`FUNCT7_FMINMAX, `FUNCT3_FMAX}: FPUOp = `FMAX;
+				{`FUNCT7_FCVTWS, 3'b???}: FPUOp = (rs2 == 5'b0 ? `FCVTWS : `FCVTWUS);
+				{`FUNCT7_FMVXW, `FUNCT3_FMVXW}: FPUOp = `FMVXW;
+				{`FUNCT7_FEQ, `FUNCT3_FEQ}: FPUOp = `FEQ;
+				{`FUNCT7_FEQ, `FUNCT3_FLT}: FPUOp =`FLT;
+				{`FUNCT7_FEQ, `FUNCT3_FLE}: FPUOp = `FLE;
+				{`FUNCT7_FCLASS, `FUNCT3_FCLASS}: FPUOp = `FCLASS;
+				{`FUNCT7_FCVTSW, 3'b???}: FPUOp = (rs2 == 5'b0 ? `FCVTSW : `FCVTSWU);
+				{`FUNCT7_FMVWX, 3'b???}: FPUOp = `FMVWX;
+				default: FPUOp = `FADD;
+			endcase
 			ALUOp = `ADD;
-			FPUOp = `FADD;
 		end
 		`ALU_LOAD_STORE: begin
 			ALUOp  = `ADD;
