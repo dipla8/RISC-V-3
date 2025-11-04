@@ -12,7 +12,7 @@ module fpu_adder(
     wire [7:0] e1,e2,d,expdiff,fexp;
     wire [26:0] fl1, fl2, adder_out, mask;
     wire [25:0] fl2_intermediate;
-    reg [31:0] fmin_max_out, fcomp_out;
+    reg [31:0] fmin_max_out, fcomp_out1, fcomp_out2, fcomp_out3, fcomp_out;
     reg f_sign;
     reg [4:0] count;
     reg [26:0]out4;
@@ -131,7 +131,7 @@ module fpu_adder(
             end
         end
         else if (op == `FMIN || op == `FMAX) begin
-            assign fmin_max_out =   (n1_is_nan) ? number2 :
+            fmin_max_out <=   (n1_is_nan) ? number2 :
                                     (n2_is_zero && n1_is_zero) ? {s1 & s2, 31'b0} : // handle -0 and +0
                                     (s1 != s2) ? (s1 ?  ((op == `FMIN) ? number1 : number2) : 
                                                         ((op == `FMIN) ? number2 : number1)) : //one is negative
@@ -141,19 +141,19 @@ module fpu_adder(
                                                                                                 ((op == `FMIN) ? number2 : number1));
         end
         else if (op == `FEQ) begin
-            assign fcomp_out =  (n1_is_nan) ? 32'b0 :
+            fcomp_out1 <=  (n1_is_nan) ? 32'b0 :
                                 (n1_is_zero && n2_is_zero) ? 32'b1 : // handle -0 and +0
                                 (number1 == number2) ? 32'b1 : 32'b0;
         end
         else if (op == `FLT) begin
-            fcomp_out = (n1_is_nan) ? 32'b0 :
+            fcomp_out2 <= (n1_is_nan) ? 32'b0 :
                         (n1_is_zero && n2_is_zero) ? 32'b0 : // handle -0 and +0
                         (s1 != s2) ? (s1 ? 32'b1 : 32'b0) :   // different signs: negative < positive
                         ((e1 > e2) || ((e1 == e2) && (m1 > m2))) ? ((s1 == 1'b0) ? 32'b0 : 32'b1) :   // same sign: compare magnitudes
                                                                    ((s1 == 1'b0) ? 32'b1 : 32'b1);
         end
         else if (op == `FLE) begin
-            assign fcomp_out = (n1_is_nan) ? 32'b0 :
+            fcomp_out3 <= (n1_is_nan) ? 32'b0 :
                         (n1_is_zero && n2_is_zero) ? 32'b1 : // handle -0 and +0
                         (number1 == number2) ? 32'b1 :
                         (s1 != s2) ? (s1 ? 32'b1 : 32'b0) :
@@ -178,7 +178,7 @@ module fpu_adder(
     //final number to be output
     assign out = (op == `FADD || op == `FSUB) ? {f_sign, exp4_post, m_final} :
                  (op == `FMIN || op == `FMAX) ? fmin_max_out:
-                 (op == `FEQ || op == `FLT || op == `FLE) ? fcomp_out :
+                 (op == `FEQ) ? fcomp_out1 : (op == `FLT) ? fcomp_out2 : (op == `FLE) ? fcomp_out3:
                  32'b0;
     
 endmodule

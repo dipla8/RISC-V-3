@@ -586,6 +586,7 @@ control_main control_main (
 	.JumpJALR(JumpJALR),
 	.inA_is_PC(inA_is_PC),
 	.EXcntrl(EXcntrl),
+	.funct7(funct7),
 	.opcode(opcode)
 );
 wire [31:0] div_rdA, div_rdB;

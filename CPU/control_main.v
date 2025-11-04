@@ -25,7 +25,7 @@ module control_main(output reg RegDst,
 
 always @(*)
 begin
-	reg_type = 0; // sets registers to x registers
+	reg_type = 3'b000; // sets registers to x registers
 	case (opcode)
 		`R_FORMAT: begin 
 			RegDst		= 1'b1;
@@ -164,7 +164,7 @@ begin
 		`F_N_M_SUB_FORMAT,
 		`F_N_M_ADD_FORMAT,
 		`F_FORMAT: begin 
-			reg_type 	= funct7 == `FUNCT7_FEQ ? 3'b100 : funct7==`FUNCT7_FCVTWS ? 3'b100 : funct7==`FUNCT7_FMVXW ? 3'b100 : funct7==`FUNCT7_FCLASS ? 3'b100: funct7==`FUNCT7_FCVTSW ? 3'b101 : funct7==`FUNCT7_FMVWX ? 3'b101 : 3'b010; // FP registers
+			reg_type 	= ((funct7 == `FUNCT7_FEQ) ? 3'b100 : funct7==`FUNCT7_FCVTWS ? 3'b100 : funct7==`FUNCT7_FMVXW ? 3'b100 : funct7==`FUNCT7_FCLASS ? 3'b100: funct7==`FUNCT7_FCVTSW ? 3'b101 : funct7==`FUNCT7_FMVWX ? 3'b101 : 3'b010); // FP registers
 			RegDst		= 1'b1;
 			MemRead		= 1'b0;
 			MemWrite	= 1'b0;
