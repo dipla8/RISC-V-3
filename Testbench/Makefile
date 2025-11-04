@@ -1,6 +1,6 @@
 all: clean comp
 comp:
-	iverilog -Winfloop -DTESTBENCH -o test.o -s test -I../include ./soktb.v ../CPU/*.v ../Memories/*.v ../*.v
+	iverilog -Winfloop -DTESTBENCH -o test.o -s test -I../include ./soktb.v ../CPU/*.v ../Memories/*.v ../*.v ../CPU/*.sv
 	echo finish | vvp test.o > output.txt
 	gtkwave gtkw.gtkw 2>/dev/null
 clean:
