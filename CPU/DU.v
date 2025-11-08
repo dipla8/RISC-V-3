@@ -10,7 +10,7 @@ module division_unit(
 	output trapdiv,
 	output reg [31:0] quo
 );
-	assign trapdiv = ((ALUOp == `DIV) || (ALUOp == `DIVU) && !(inB)) ? 1'b0 : 1'b1;
+	assign trapdiv = ((ALUOp == `DIV) || (ALUOp == `DIVU) && !(inB));
 reg [31:0] divisor;
 reg [63:0] rediv;
 reg sign;
