@@ -18,8 +18,8 @@
 module cpu(	input clock,
 			input reset,
 			output overflow,
-			output 	[31:0] PC_out1, PC_out2,
-			output [31:0] PC_IF2_out1, PC_IF2_out2,
+			output 	[31:0] PC_out_1, PC_out_2,
+			//output [31:0] PC_IF2_out_1, PC_IF2_out_2,
 			input  	[31:0] instr_1, instr_2,
 			input instr_stall,
 			output icache_write_pc,
@@ -53,7 +53,7 @@ reg 		[31:0]  PC1_IF2, PC2_IF2, PC3_IF2, PC4_IF2; // SMT
 reg		[31:0]	PC1, PC2, PC3, PC4, PC_OLD, IFID_PC, IDEX_PC, EXMEM_PC, MEMWB_PC; // SMT
 reg		single_issue_counter; // SMT CHANGE ME!!!!
 wire	[31:0]	PCplus4, JumpAddress;
-reg 	[31:0]	PC1_new, PC2_new, PC3_new, PC4_new;
+reg 	[31:0]	PC1_new, PC2_new, PC3_new, PC4_new, PC_IF2;
 wire	[31:0]	instr;
 reg	[31:0]	IF2_instr;
 reg	[1:0]	IF2_hartid;
@@ -136,6 +136,7 @@ reg      		MEMWB_csr_immidiate;
 
 reg	[5:0]	local_divcy;
 wire	[5:0]	divcy;
+wire		trapdiv;
 wire	[6:0]	funct7;
 wire	[4:0]	instr_rs1, instr_rs2, instr_rd, RegWriteAddr;
 wire	[4:0]	ALUOp;
@@ -170,9 +171,9 @@ assign hartid_1 = 0;
 assign hartid_2 = 0;
 assign PC_out_1 = PC2;
 assign PC_out_2 = PC2;
-assign PC_out = PC;
-assign PC_IF2_out = PC_IF2;
-assign instr = instr_in;
+//assign PC_IF2_out_1 = PC2_IF2;
+//assign PC_IF2_out_2 = PC2_IF2;
+
 assign data_addr = (ren==1'b1)?ALUOut:EXMEM_ALUOut;
 assign ren = IDEX_MemRead&(~branch_taken);
 assign wen = EXMEM_MemWrite;
@@ -196,7 +197,7 @@ begin
 	else if (write_pc == 1'b1)
 	// else if (write_pc == 1'b1 || (new_pc_set == 1'b1 && instr_stall))
 	begin
-		if(PC_new>=32'h80000000 && started==0)begin
+		if(/*PC_new>=32'h80000000 &&*/ started==0)begin
 			started <=1;
 		end
 		PC1 <= (IFID_hartid == 2'b11)?PC1_new: PC1;
@@ -213,7 +214,7 @@ end
 reg exited=0;
 always_comb begin
 	exited=0;
-	if(started && PC<32'h80000000)begin
+	if(started/* && PC<32'h80000000*/)begin
 		exited=1;
 	end
 
@@ -239,13 +240,18 @@ begin
 		PC2_IF2 <= 32'b0;
 		PC3_IF2 <= 32'b0;
 		PC4_IF2 <= 32'b0;
+		PC_IF2	<= 32'b0;
+		delayed_hartid_1 <= 0;
+		delayed_hartid_2 <= 0;
+		delayed_instr_1 <= 0;
+		delayed_instr_2 <= 0;
 		single_issue_counter <= 1'b0;
 		write_pc_delayed <= 1'b0;
 		bubble_ifid_delayed <= 1'b0;
 		debug_error <= 2'b0;
 	end
 	else begin
-		if(PC[0]||PC[1])begin
+		if(PC1[0]||PC1[1])begin
 			debug_error<=2'b1;
 		end
 		write_pc_delayed <= write_pc;
@@ -298,18 +304,21 @@ end
 // also make sure that the cache only handles specific addresses
 always@(*)
 begin
-	if(delayed_instr == 0) begin
-		F2_instr = (single_issue_counter)?instr_2: instr_1;
+	if((!single_issue_counter && !delayed_instr_1) || (single_issue_counter && !delayed_instr_2)) begin // CHECK AGAIN
+		IF2_instr = (single_issue_counter)?instr_2: instr_1;
 		IF2_hartid = (single_issue_counter)?hartid_2:hartid_1;
 		PC_IF2 = single_issue_counter?PC_out_2:PC_out_1;
 	end
 	else begin
 		if(bubble_ifid_delayed == 1'b1||bubble_ifid==1'b1) begin
 			IF2_instr = 32'b0;
+			IF2_hartid = 2'b0;
 			debug_str = "BUBLE!!";
 		end
 		else begin
-			IF2_instr = delayed_instr;
+			IF2_instr = (single_issue_counter)?delayed_instr_2:delayed_instr_1;
+			IF2_hartid = (single_issue_counter)?delayed_hartid_2:delayed_hartid_1;
+			PC_IF2 = single_issue_counter?delayed_PC_2:delayed_PC_1;
 			debug_str = "Normal";
 		end
 	end
@@ -598,7 +607,7 @@ always@(posedge clock or negedge reset)begin
 					if(branch_taken||Jump||EXMEM_JumpJALR)
 					begin
 						pc_string<="BID Taken";
-						newmepc <= PC_new;
+						newmepc <= PC1_new; // WAS PC_NEW
 					end
 					else if(write_pc==1'b0&&IFID_PC!=32'hffffffff)
 					begin
@@ -613,7 +622,7 @@ always@(posedge clock or negedge reset)begin
 					else
 					begin
 						pc_string<="PC Taken";
-						newmepc <= PC;
+						newmepc <= PC_out_1; // WAS PC
 					end
 					mepc_state <= MEPC_WAITINGJUMP;
 				end
@@ -622,7 +631,7 @@ always@(posedge clock or negedge reset)begin
 				if(branch_taken||Jump||EXMEM_JumpJALR)
 				begin
 					pc_string<="Branch Taken";
-					newmepc <= PC_new;
+					newmepc <= PC1_new; // WAS PC_NEW
 				end
 				if(flushPipeline==1'b0)
 				begin
@@ -655,7 +664,7 @@ CSRFile csrFile(
 	// clic signals
 	.PC_ID(IFID_PC),
 	// maybe check if we are on a branch, if so then we need save the branch
-	.new_mepc(newmepc),
+	//.new_mepc(newmepc),
 	.software_interrupt(software_interrupt),
 	.timer_interrupt(timer_interrupt),
 	.external_interrupt(external_interrupt),
@@ -683,7 +692,7 @@ control_main control_main (
 	.JumpJALR(JumpJALR),
 	.inA_is_PC(inA_is_PC),
 	.EXcntrl(EXcntrl),
-	.funct7(funct7,)
+	.funct7(funct7),
 	.opcode(opcode)
 );
 
@@ -713,11 +722,11 @@ control_stall_id control_stall_id (
 	.int_trap		(int_taken),
 	.flushPipeline	(flushPipeline),
 	.memReady		(memReady),
-	.PCSrc			(PCSrc)),
 	.trapdiv(trapdiv),
 	.divcy((local_divcy != 32)),
 	.PCSrc			(PCSrc),
-	.reg_type(reg_type));
+	.reg_type(reg_type)
+	);
 
 /************************ Execution Unit (EX)  ***********************************/
 
@@ -778,7 +787,7 @@ fpu FPU(
 
 
 // EXMEM pipeline register
-assign JumpAddress = ((IFID_PC!=32'hffffffff)?IFID_PC:(PC_IF2!=32'hffffffff)?PC_IF2:PC) + signExtend;
+//assign JumpAddress = ((IFID_PC!=32'hffffffff)?IFID_PC:(PC_IF2!=32'hffffffff)?PC_IF2:PC) + signExtend;
 always @(posedge clock or negedge reset)
 begin
 	if(local_divcy == 6'd32 && divcy != 6'd32)begin
@@ -791,7 +800,7 @@ begin
 		local_divcy <= 6'd32;
 	end
 	if ((reset == 1'b0)) begin
-		loca_divcy		<= 6'd32;
+		local_divcy		<= 6'd32;
 		EXMEM_ALUOut		<= 32'b0;
 		EXMEM_overflow		<= 1'b0;
 		EXMEM_JumpJALR 		<= 1'b0;
@@ -959,7 +968,7 @@ begin
 			MEMWB_csr_write_allowed <= 1'b0;
 			MEMWB_PC			<= 32'hffffffff;
 			MEMWB_instr			<= 32'b0;
-			MEMWB_instr			<= 2'b0;
+			MEMWB_hartid			<= 2'b0;
 			MEMWB_MemAddr		<= 32'b0;
 			MEMWB_MemWriteData	<= 32'b0;
 		end 
@@ -982,7 +991,7 @@ begin
 			MEMWB_MemWriteData	<= EXMEM_MemWriteData;
 			`ifdef TESTBENCH
 				MEMWB_resolve_time <= resolve_time;
-				MEMWB_new_pc <= PC_new;
+				MEMWB_new_pc <= PC1_new; // WAS PC_NEW
 				MEMWB_dispatch_time <= EXMEM_dispatch_time;
 				MEMWB_issue_time <= EXMEM_issue_time;
 				MEMWB_decode_time <= EXMEM_decode_time;
@@ -1028,7 +1037,7 @@ integer written=0;
 longint instr_count=0;
 
 always@(posedge clock)begin
-	if(PC >= 32'h80000000)
+	if(PC1 >= 32'h80000000)
 	begin
 		time_step += 1;
 		if(MEMWB_PC!=32'hffffffff && MEMWB_PC>=32'h80000000 && loging_pc!=MEMWB_PC)begin

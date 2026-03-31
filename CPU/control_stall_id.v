@@ -1,6 +1,9 @@
 `ifndef TESTBENCH
-`include "constants.vh"
-`include "config.vh"
+
+// `include "constants.vh"
+// `include "config.vh"
+`include "../includes/constants.vh"
+`include "../includes/config.vh"
 `else
 `include "../includes/constants.vh"
 `include "../includes/config.vh"
@@ -18,8 +21,8 @@ module  control_stall_id(
 	output reg write_exmem,
 	output reg write_memwb,
 	output reg write_pc,
-	output reg instr_en,
 	output reg trap_waiting,
+	input instr_stall,
 	input [4:0] ifid_rs,
 	input [4:0] ifid_rt,
 	input [4:0] idex_rd,
@@ -34,10 +37,10 @@ module  control_stall_id(
 	input int_trap,
 	input trap_in_ID,
 	input flushPipeline,
-	input divcy,
 	input trapdiv,
-	input PCSrc,
-	input [2:0] reg_type);
+	input divcy,
+	input [2:0] reg_type,
+	input PCSrc);
 
 reg memStalled=0;
 reg suppressTrap=0;
@@ -59,9 +62,7 @@ begin
 	memStalled		= 1'b0;
 	suppressTrap	= 1'b0;
 	trap_waiting   	= syscall;
-	instr_en 		= 1'b1;
 	if(memReady == 1'b0) begin // Memory not ready
-		//write_pc		= 1'b0;
 		state = 4'd1;
 		memStalled		= 1'b1;
 		// stupid line, too scared to remove it
@@ -69,14 +70,12 @@ begin
 			write_exmem		= 1'b0;
 			write_idex		= 1'b0;
 			write_ifid		= 1'b1;
-			// instr_en	= 1'b0;
 			write_pc		= 1'b0;
 		end
 		else begin
-			// instr_en	= 1'b0;
-			write_memwb		= 1'b0; // changed from 0
-			write_exmem		= 1'b0; // changed from 0
-			write_idex		= 1'b0; // changed from 0
+			write_memwb		= 1'b0;
+			write_exmem		= 1'b0;
+			write_idex		= 1'b0;
 			write_ifid		= 1'b0;
 			write_pc		= 1'b0;
 			trap_waiting	= 1'b0;
@@ -96,7 +95,6 @@ begin
 		bubble_idex	= 1'b1;
 		write_ifid	= 1'b0;
 		write_pc	= 1'b0;
-		instr_en	= 1'b0;
 		trap_waiting= 1'b0;
 	end
 	else if ((idex_memread == 1'b1) && ((idex_rd==ifid_rs) || ((idex_rd==ifid_rt) && (reg_type != 3'b011) ))) begin // Load stall
@@ -104,13 +102,21 @@ begin
 		bubble_idex	= 1'b1;
 		write_ifid	= 1'b0;
 		write_pc	= 1'b0;
-		instr_en 	= 1'b0;
 		trap_waiting= 1'b0;
 	end
-	else if (Jump == 1'b1||trap_in_ID == 1'b1) begin // j instruction in ID stage	
+	else if ((Jump == 1'b1 & instr_stall == 1'b0)||trap_in_ID == 1'b1) begin // j instruction in ID stage	
 		state = 4'd5;
 		bubble_ifid	= 1'b1;
 	end
+
+	if(instr_stall == 1'b1)begin
+		write_pc		= 1'b0;
+		if(Jump == 1'b1) begin
+			write_ifid	= 1'b0;
+			// write_idex	= 1'b0;
+		end
+	end
+
 
 	if(int_trap == 1'b1) begin // Trap in ID stage
 		state = 4'd6;
@@ -120,15 +126,14 @@ begin
 		bubble_memwb	= 1'b1;
 		write_pc	= 1'b1;
 	end
-	else if (PCSrc == 1'b1) begin // Taken Branch in MEM stage
+	else
+	if (PCSrc == 1'b1) begin // Taken Branch in MEM stage
 		state = 4'd7;
 		bubble_ifid		= 1'b1;
 		bubble_idex		= 1'b1;
 		bubble_exmem	= 1'b1;
-		write_pc	= 1'b1;  
-		instr_en = 1'b0;
+		write_pc	= 1'b1;
 	end
-
 	if(flushPipeline == 1'b1) begin
 		state = 4'd8;
 		bubble_ifid		= 1'b1;
@@ -142,7 +147,6 @@ begin
 		write_ifid		= 1'b0;
 		write_pc		= 1'b0;
 		trap_waiting		= 1'b0;
-		instr_en	= 1'b0;
 	end
 end
 endmodule
