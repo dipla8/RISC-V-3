@@ -26,7 +26,7 @@ module memory_ctrl_d(
 	.dataout(dataout_mem),
 	.memsig(memsig1)
 );
-	cache cache_inst(
+	cache_d cache_d_inst(
 	.clk(clk),
 	.reset(reset),
 	.wen(wen),
