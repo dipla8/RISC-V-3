@@ -17,8 +17,8 @@ module top();
 	wire wen;
 	wire memReady1;
 	wire memReady2;
-	wire [31:0] PC;
-	wire [31:0] instruction;
+	wire [31:0] PC1, PC2;
+	wire [31:0] instruction_1, instruction_2;
 	wire [31:0] data_addr;
 	wire [31:0] dataout_cpu;
 	wire [31:0] datain_cpu;
@@ -33,8 +33,10 @@ module top();
 		.clock(cpu_clk),
 		.reset(reset),
 		.overflow(overflow),
-		.PC_out(PC),
-		.instr_in(instruction),
+		.PC_out_1(PC1),
+		.PC_out_2(PC2),
+		.instr_1(instruction_1),
+		.instr_2(instruction_2),
 		.ren(ren),
 		.wen(wen),
 		.data_addr(data_addr),
@@ -44,20 +46,19 @@ module top();
 		.software_interrupt(msw_irq),
 		.timer_interrupt(mtimer_irq),
 		.external_interrupt(mext_irq),
-		.instr_en(instr_en),
-		.write_pc_out(write_pc),
 		.memReady(memReady1/* && memReady2*/)
 	);
 	memory_ctrl_i icache(
 	.clk(cpu_clk),
 	.reset(!reset),
-	.address(PC),
-	.datain(32'b0),
+	.address_1(PC1),
+	.address_2(PC2),
 	.wen(1'b0),
-	.ren(instr_en),
+	.ren(1'b1),
 	.byte_select_vector(byte_selector),
 	.memReady(memReady1),
-	.dataout(instruction)
+	.dataout_1(instruction_1),
+	.dataout_2(instruction_2)
 	);
 	memory_ctrl_d dcache(
 	.clk(cpu_clk),
