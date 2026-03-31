@@ -1,0 +1,47 @@
+if(mhartid == 0)
+	a = 1;
+else if(mhartid == 1)
+	b = 2;
+else if(mhartid == 2)
+	c = 3;
+else if(mhartid == 3)
+	d = 4;
+
+// ASSEMBLY
+
+0: csrr $1, mhartid		xF14020F3
+4: beqz $1, HART1		x00008C63		
+
+8: li $t2, 1			x00100113
+12: beq $t1, $t2, HART2		x00208E63
+
+
+16: li $t2, 2			x00200113
+20: beq $t1, $t2, HART3		x02208063
+
+24: j HART4			x0002806F
+
+HART1:
+28:	li $t2, 1		x00100113
+32:	sw $t2, 0($fp)		x00012023
+36:	j END			x0002806F
+
+HART2:
+40:	li $t2, 2		x00200113
+44:	sw $t2, 4($fp)		x00012223
+48:	j END			x0001C06F
+
+HART3:
+52:	li $t2, 3		x00300113
+56:	sw $t2, 8($fp)		x00012423
+60:	j END			x0001006F
+
+HART4:
+64:	li $t2, 4		x00400113
+68:	sw $t2, 12($fp)		x00012623
+END:
+
+HART1 > 0 -> 4 -> 28 -> 32 -> 36 -> 72
+HART2 > 0 -> 4 -> 8 -> 12 -> 40 -> 44 -> 48 -> 72
+HART3 > 0 -> 4 -> 8 -> 12 -> 16 -> 20 -> 52 -> 56 -> 60 -> 72
+HART4 > 0 -> 4 -> 8 -> 12 -> 16 -> 20 -> 24 -> 64 -> 68 -> 72
