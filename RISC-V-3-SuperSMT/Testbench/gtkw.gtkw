@@ -1,0 +1,99 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Apr 13 19:48:19 2026
+[*]
+[dumpfile] "C:\Users\Cougar\Desktop\RISC-V-3-SuperSMT\Testbench\ZSOC.vcd"
+[dumpfile_mtime] "Mon Apr 13 19:47:28 2026"
+[dumpfile_size] 2421502
+[savefile] "C:\Users\Cougar\Desktop\RISC-V-3-SuperSMT\Testbench\gtkw.gtkw"
+[timestart] 9
+[size] 1848 1016
+[pos] -1 -1
+*-4.129734 43 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test.
+[treeopen] test.top1.
+[treeopen] test.top1.cpu1.
+[sst_width] 253
+[signals_width] 262
+[sst_expanded] 1
+[sst_vpaned_height] 411
+@200
+-
+@28
+test.top1.cpu1.clock
+@24
+test.top1.cpu1.PC1[31:0]
+test.top1.cpu1.PC2[31:0]
+test.top1.cpu1.PC3[31:0]
+test.top1.cpu1.PC4[31:0]
+@25
+test.top1.cpu1.PC4_new[31:0]
+@22
+test.top1.instruction_1[31:0]
+@28
+test.top1.cpu1.IFID_hartid[1:0]
+@24
+test.top1.cpu1.IFID_PC[31:0]
+@28
+test.top1.cpu1.bubble_ifid
+@24
+test.top1.cpu1.new_pc1_set[1:0]
+test.top1.cpu1.new_pc2_set[1:0]
+test.top1.cpu1.new_pc3_set[1:0]
+test.top1.cpu1.new_pc4_set[1:0]
+@22
+test.top1.cpu1.IFID_instr[31:0]
+test.top1.cpu1.IDEX_instr[31:0]
+@28
+test.top1.cpu1.Branch
+test.top1.cpu1.Zero
+test.top1.cpu1.EXMEM_Zero
+test.top1.cpu1.branch_taken
+test.top1.cpu1.EXMEM_funct3[2:0]
+test.top1.cpu1.EXMEM_Branch
+@24
+test.top1.cpu1.csr_data[31:0]
+@28
+test.top1.cpu1.csrFile.ren
+@22
+test.top1.cpu1.IFID_instr[31:0]
+test.top1.cpu1.funct3[3:0]
+@28
+test.top1.cpu1.flushPipeline
+test.top1.cpu1.EXMEM_Branch
+test.top1.cpu1.PCSrc
+test.top1.cpu1.Jump
+test.top1.cpu1.PCSrc
+@24
+test.top1.cpu1.JumpAddress[31:0]
+@22
+test.top1.cpu1.PC1_IF2[31:0]
+test.top1.cpu1.PC2_IF2[31:0]
+@24
+test.top1.cpu1.IFID_PC[31:0]
+@22
+test.top1.cpu1.IFID_instr[31:0]
+test.top1.cpu1.IDEX_instr[31:0]
+test.top1.cpu1.PC2_IF2[31:0]
+@24
+test.top1.cpu1.PC2[31:0]
+test.top1.cpu1.PC2_new[31:0]
+@28
+test.top1.cpu1.IDEX_JumpJALR
+test.top1.cpu1.IDEX_Jump
+test.top1.cpu1.EXMEM_JumpJALR
+@24
+test.top1.cpu1.BranchInA[31:0]
+test.top1.cpu1.IDEX_signExtend[31:0]
+test.top1.cpu1.BranchALUOut[31:0]
+test.top1.cpu1.signExtend[31:0]
+test.top1.cpu1.EXMEM_BranchALUOut[31:0]
+@28
+test.top1.cpu1.pc_jumped
+test.top1.cpu1.PCSrc
+test.top1.cpu1.flushPipeline
+@24
+test.top1.cpu1.SignExtendSelector.out[31:0]
+test.top1.cpu1.SignExtendSelector.imm_j[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

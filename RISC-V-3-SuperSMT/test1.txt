@@ -1,0 +1,43 @@
+if(mhartid == 0)
+	a = 1;
+else if(mhartid == 1)
+	b = 2;
+else if(mhartid == 2)
+	c = 3;
+else if(mhartid == 3)
+	d = 4;
+
+// ASSEMBLY
+
+0: csrr $1, mhartid		xF14020F3 // 100% OKAY
+4: beqz $1, HART1		x00100A63 // 100% OKAY
+
+8: li $2, 1			x00100113 // 100% OKAY
+12: beq $1, $2, HART2		x00208C63 // 100% OKAY
+
+
+16: li $2, 2			x00200113 // 100% OKAY
+20: beq $1, $2, HART3		x00208E63 // 100% OKAY
+
+24: j HART4			x0240006F // 100% OKAY
+
+HART1:
+28:	li $2, 1		x00100113 // 100% OKAY
+32:	sw $2, 0($fp)		x00012023
+36:	j END			x0200006F // 100% OKAY
+
+HART2:
+40:	li $2, 2		x00200113 // 100% OKAY
+44:	sw $2, 4($fp)		x00012223
+48:	j END			x0140006F // 100% OKAY
+
+HART3:
+52:	li $2, 3		x00300113 // 100% OKAY
+56:	sw $2, 8($fp)		x00012423
+60:	j END			x0080006F // 100% OKAY
+
+HART4:
+64:	li $2, 4		x00400113 // 100% OKAY
+68:	sw $2, 12($fp)		x00012623
+END:
+
