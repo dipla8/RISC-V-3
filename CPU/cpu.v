@@ -467,96 +467,168 @@ SignExtendSelector SignExtendSelector1 (
 always @(posedge clock or negedge reset)
 begin
 	if ((reset == 1'b0)) begin
-		IDEX_inA_is_PC	<= 1'b0;
-		IDEX_Jump		<= 2'b00;
-		IDEX_JumpJALR	<= 1'b0;
+		IDEX_inA_is_PC_0<= 1'b0;
+		IDEX_inA_is_PC_1<= 1'b0;
+		IDEX_Jump		<= 2'b00;	//SKEPSH
+		IDEX_JumpJALR_0	<= 1'b0;
+		IDEX_JumpJALR_1	<= 1'b0;
 		IDEX_signExtend0<= 32'b0;
 		IDEX_signExtend1<= 32'b0;
-		IDEX_instr_rd	<= 5'b0;
-		IDEX_instr_rs1	<= 5'b0;
-		IDEX_instr_rs2	<= 5'b0;
-		IDEX_RegDst		<= 1'b0;
-		IDEX_EXcntrl	<= 3'b0;
-		IDEX_ALUSrc		<= 1'b0;
-		IDEX_Branch		<= 1'b0;
-		IDEX_MemRead	<= 1'b0;
-		IDEX_MemWrite	<= 1'b0;
-		IDEX_MemToReg	<= 1'b0;
-		IDEX_RegWrite	<= 1'b0;
-		IDEX_funct3		<= 3'b0;
-		IDEX_funct7		<= 7'b0;
-		IDEX_PC			<= 32'b0;
-		IDEX_rdA		<= 32'b0;
-		IDEX_rdB		<= 32'b0;
+		IDEX_instr0_rd	<= 5'b0;
+		IDEX_instr1_rd	<= 5'b0;
+		IDEX_instr0_rs1	<= 5'b0;
+		IDEX_instr1_rs1	<= 5'b0;
+		IDEX_instr0_rs2	<= 5'b0;
+		IDEX_instr1_rs2	<= 5'b0;
+		IDEX_RegDst_0	<= 1'b0;
+		IDEX_RegDst_1	<= 1'b0;
+		IDEX_EXcntrl_0	<= 3'b0;
+		IDEX_EXcntrl_1	<= 3'b0;
+		IDEX_ALUSrc_0	<= 1'b0;
+		IDEX_ALUSrc_1	<= 1'b0;
+		IDEX_Branch_0	<= 1'b0;
+		IDEX_Branch_1	<= 1'b0;
+		IDEX_MemRead_0	<= 1'b0;
+		IDEX_MemRead_1	<= 1'b0;
+		IDEX_MemWrite_0	<= 1'b0;
+		IDEX_MemWrite_1	<= 1'b0;
+		IDEX_MemToReg_0	<= 1'b0;
+		IDEX_MemToReg_1	<= 1'b0;
+		IDEX_RegWrite_0	<= 1'b0;
+		IDEX_RegWrite_1	<= 1'b0;
+		IDEX_funct3_0	<= 3'b0;
+		IDEX_funct3_1	<= 3'b0;
+		IDEX_funct7_0	<= 7'b0;
+		IDEX_funct7_1	<= 7'b0;
+		IDEX_PC_0		<= 32'b0;
+		IDEX_PC_1		<= 32'b0;
+		IDEX_rdA_0		<= 32'b0;
+		IDEX_rdA_1		<= 32'b0;
+		IDEX_rdB_0		<= 32'b0;
+		IDEX_rdB_1		<= 32'b0;
 		IDEX_reg_type_0	<= 3'b0;
 		IDEX_reg_type_1	<= 3'b0;
-		IDEX_instr		<= 32'b0;
-		IDEX_csr_addr	<= 12'b0;
-		IDEX_csr_write_allowed <= 1'b0;
+		IDEX_instr_0	<= 32'b0;
+		IDEX_instr_1	<= 32'b0;
+		IDEX_csr_addr_0	<= 12'b0;
+		IDEX_csr_addr_1	<= 12'b0;
+		IDEX_csr_write_allowed_0 <= 1'b0;
+		IDEX_csr_write_allowed_1 <= 1'b0;
 	end
 	else
 	begin
-		if ((bubble_idex == 1'b1)) begin
-			IDEX_inA_is_PC	<= 1'b0;
+		if ((bubble_idex_0)) begin
+			IDEX_inA_is_PC_0<= 1'b0;
 			IDEX_Jump		<= 2'b00;
-			IDEX_JumpJALR	<= 1'b0;
+			IDEX_JumpJALR_0	<= 1'b0;
 			IDEX_signExtend0<= 32'b0;
-			IDEX_signExtend1<= 32'b0;
-			IDEX_instr_rd	<= 5'b0;
-			IDEX_instr_rs1	<= 5'b0;
-			IDEX_instr_rs2	<= 5'b0;
-			IDEX_RegDst		<= 1'b0;
-			IDEX_EXcntrl	<= 3'b0;
-			IDEX_ALUSrc		<= 1'b0;
-			IDEX_Branch		<= 1'b0;
-			IDEX_MemRead	<= 1'b0;
-			IDEX_MemWrite	<= 1'b0;
-			IDEX_MemToReg	<= 1'b0;
-			IDEX_RegWrite	<= 1'b0;
-			IDEX_funct3		<= 3'b0;
-			IDEX_funct7		<= 7'b0;
-			IDEX_rdA		<= 32'b0;
-			IDEX_rdB		<= 32'b0;
+			IDEX_instr0_rd	<= 5'b0;
+			IDEX_instr0_rs1	<= 5'b0;
+			IDEX_instr0_rs2	<= 5'b0;
+			IDEX_RegDst_0	<= 1'b0;
+			IDEX_EXcntrl_0	<= 3'b0;
+			IDEX_ALUSrc_0	<= 1'b0;
+			IDEX_Branch_0	<= 1'b0;
+			IDEX_MemRead_0	<= 1'b0;
+			IDEX_MemWrite_0	<= 1'b0;
+			IDEX_MemToReg_0	<= 1'b0;
+			IDEX_RegWrite_0	<= 1'b0;
+			IDEX_funct3_0	<= 3'b0;
+			IDEX_funct7_0	<= 7'b0;
+			IDEX_rdA_0		<= 32'b0;
+			IDEX_rdB_0		<= 32'b0;
 			IDEX_reg_type_0	<= 3'b0;
-			IDEX_reg_type_1	<= 3'b0;
-			IDEX_instr		<= 32'b0;
-			IDEX_csr_addr	<= 12'b0;
-			IDEX_csr_write_allowed <= 1'b0;
-			IDEX_PC			<= 32'hffffffff;
+			IDEX_instr_0	<= 32'b0;
+			IDEX_csr_addr_0	<= 12'b0;
+			IDEX_csr_write_allowed_0 <= 1'b0;
+			IDEX_PC_0		<= 32'hffffffff;
 		end
-		else if (write_idex == 1'b1) begin
-			IDEX_inA_is_PC	<= inA_is_PC;
+		else if (write_idex_0) begin
+			IDEX_inA_is_PC_0<= inA_is_PC_0;
 			IDEX_Jump		<= Jump;
-			IDEX_JumpJALR	<= JumpJALR;
+			IDEX_JumpJALR_0	<= JumpJALR_0;
 			IDEX_signExtend0<= signExtend0;
-			IDEX_signExtend1<= signExtend1;
-			IDEX_instr_rd	<= instr_rd;
-			IDEX_instr_rs1	<= instr_rs1;
-			IDEX_instr_rs2	<= instr_rs2;
-			IDEX_RegDst		<= RegDst;
-			IDEX_EXcntrl	<= EXcntrl;
-			IDEX_ALUSrc		<= ALUSrc;
-			IDEX_Branch		<= Branch;
-			IDEX_MemRead	<= MemRead;
-			IDEX_MemWrite	<= MemWrite;
-			IDEX_MemToReg	<= MemToReg;
-			IDEX_RegWrite	<= RegWrite;
+			IDEX_instr0_rd	<= instr0_rd;
+			IDEX_instr0_rs1	<= instr0_rs1;
+			IDEX_instr0_rs2	<= instr0_rs2;
+			IDEX_RegDst_0	<= RegDst_0;
+			IDEX_EXcntrl_0	<= EXcntrl_0;
+			IDEX_ALUSrc_0	<= ALUSrc_0;
+			IDEX_Branch_0	<= Branch_0;
+			IDEX_MemRead_0	<= MemRead_0;
+			IDEX_MemWrite_0	<= MemWrite_0;
+			IDEX_MemToReg_0	<= MemToReg_0;
+			IDEX_RegWrite_0	<= RegWrite_0;
 			IDEX_funct3_0	<= funct3_0;
-			IDEX_funct3_1	<= funct3_1;
-			IDEX_funct7		<= funct7;
-			IDEX_PC			<= IFID_PC;
-			IDEX_rdA		<= rdA;
-			IDEX_rdB		<= rdB;
+			IDEX_funct7_0	<= funct7_0;
+			IDEX_PC_0		<= IFID_PC_0;
+			IDEX_rdA_0		<= rdA_0;
+			IDEX_rdB_0		<= rdB_0;
 			// if the exponent is NaN or +-infinity then to propagate the value, turn the other to zero
 			// if both are NaN or inf, then keep just one (the extra condition for rdA)
 			IDEX_reg_type_0	<= reg_type_0;
+			IDEX_instr_0	<= IFID_instr_0;
+			IDEX_csr_addr_0	<= csr_addr_0;
+			IDEX_csr_write_allowed_0 <= csr_write_allowed_0;
+		end
+
+		if ((bubble_idex_1)) begin
+			IDEX_inA_is_PC_1<= 1'b0;
+			IDEX_Jump		<= 2'b00;
+			IDEX_JumpJALR_1	<= 1'b0;
+			IDEX_signExtend1<= 32'b0;
+			IDEX_instr1_rd	<= 5'b0;
+			IDEX_instr1_rs1	<= 5'b0;
+			IDEX_instr1_rs2	<= 5'b0;
+			IDEX_RegDst_1	<= 1'b0;
+			IDEX_EXcntrl_1	<= 3'b0;
+			IDEX_ALUSrc_1	<= 1'b0;
+			IDEX_Branch_1	<= 1'b0;
+			IDEX_MemRead_1	<= 1'b0;
+			IDEX_MemWrite_1	<= 1'b0;
+			IDEX_MemToReg_1	<= 1'b0;
+			IDEX_RegWrite_1	<= 1'b0;
+			IDEX_funct3_1	<= 3'b0;
+			IDEX_funct7_1	<= 7'b0;
+			IDEX_rdA_1		<= 32'b0;
+			IDEX_rdB_1		<= 32'b0;
+			IDEX_reg_type_1	<= 3'b0;
+			IDEX_instr_1	<= 32'b0;
+			IDEX_csr_addr_1	<= 12'b0;
+			IDEX_csr_write_allowed_1 <= 1'b0;
+			IDEX_PC_1		<= 32'hffffffff;
+		end
+		else if (write_idex_1) begin
+			IDEX_inA_is_PC_1<= inA_is_PC_1;
+			IDEX_Jump		<= Jump;
+			IDEX_JumpJALR_1	<= JumpJALR_1;
+			IDEX_signExtend1<= signExtend1;
+			IDEX_instr1_rd	<= instr1_rd;
+			IDEX_instr1_rs1	<= instr1_rs1;
+			IDEX_instr1_rs2	<= instr1_rs2;
+			IDEX_RegDst_1	<= RegDst_1;
+			IDEX_EXcntrl_1	<= EXcntrl_1;
+			IDEX_ALUSrc_1	<= ALUSrc_1;
+			IDEX_Branch_1	<= Branch_1;
+			IDEX_MemRead_1	<= MemRead_1;
+			IDEX_MemWrite_1	<= MemWrite_1;
+			IDEX_MemToReg_1	<= MemToReg_1;
+			IDEX_RegWrite_1	<= RegWrite_1;
+			IDEX_funct3_1	<= funct3_1;
+			IDEX_funct7_1	<= funct7_1;
+			IDEX_PC_1		<= IFID_PC_1;
+			IDEX_rdA_1		<= rdA_1;
+			IDEX_rdB_1		<= rdB_1;
+			// if the exponent is NaN or +-infinity then to propagate the value, turn the other to zero
+			// if both are NaN or inf, then keep just one (the extra condition for rdA)
 			IDEX_reg_type_1	<= reg_type_1;
-			IDEX_instr		<= IFID_instr;
-			IDEX_csr_addr	<= csr_addr;
-			IDEX_csr_write_allowed <= csr_write_allowed;
+			IDEX_instr_1	<= IFID_instr_1;
+			IDEX_csr_addr_1	<= csr_addr_1;
+			IDEX_csr_write_allowed_1 <= csr_write_allowed_1;
 		end
 	end
 end
+
 reg [31:0] newmepc;
 reg [255*8-1:0] pc_string;
 //reg pc_jumped;
@@ -658,6 +730,7 @@ always@(posedge clock or negedge reset)begin
 	// end
 	// newmepc = PC;
 end
+
 wire flushPipeline;
 
 CSRFile csrFile(
@@ -684,6 +757,7 @@ CSRFile csrFile(
 	.flushPipeline(flushPipeline),
 	.trap_vector(trap_vector)
 );
+
 // Main Control Unit
 control_main control_main (
 	.RegDst(RegDst),
@@ -701,6 +775,7 @@ control_main control_main (
 	.funct7(funct7), // ALLAGMA *2
 	.opcode(opcode)	// ALLAGMA *2
 );
+
 wire [31:0] div_rdA, div_rdB;
 //division FSM
 // Control Unit that generates stalls and bubbles to pipeline stages
@@ -738,152 +813,274 @@ control_stall_id control_stall_id (
 /************************ Execution Unit (EX)  ***********************************/
 
 
-// ALU input A
+// ALU input A_0
 always @(*) begin
-    if (IDEX_inA_is_PC == 1'b1) begin
-        ALUInA = IDEX_PC;
-    end else begin
-        ALUInA = bypassOutA;
-    end
-end
-// ALU input B
-always @(*) begin
-    if (IDEX_Jump != 2'b00 || IDEX_JumpJALR == 1'b1) begin
-        ALUInB = 32'd4;
-    end else if (IDEX_ALUSrc == 1'b0) begin
-        ALUInB = bypassOutB;
-    end else begin
-        ALUInB = IDEX_signExtend;
-    end
+    if (IDEX_inA_is_PC_0 == 1'b1)
+        ALUInA_0 = IDEX_PC_0;
+    else
+        ALUInA_0 = bypassOutA_0;
 end
 
-assign BranchInA = (IDEX_JumpJALR == 1'b1) ? bypassOutA : IDEX_PC;
+// ALU input A_1
+always @(*) begin
+    if (IDEX_inA_is_PC_1 == 1'b1)
+        ALUInA_1 = IDEX_PC_1;
+    else
+        ALUInA_1 = bypassOutA_1;
+end
 
-assign BranchALUOut = BranchInA + IDEX_signExtend;
+// ALU input B_0
+always @(*) begin
+    if (IDEX_Jump != 2'b00 || IDEX_JumpJALR_0 == 1'b1)
+        ALUInB_0 = 32'd4;
+    else if (IDEX_ALUSrc_0 == 1'b0)
+        ALUInB_0 = bypassOutB_0;
+    else
+        ALUInB_0 = IDEX_signExtend_0;
+end
 
-// ALU
-ALUCPU cpu_alu(		
-	.out(ALUOut),
-	.zero(Zero),	
-	.overflow(overflow),
-	.inA(ALUInA),
-	.inB(ALUInB),
-	.op(ALUOp)
+// ALU input B_1
+always @(*) begin
+    if (IDEX_Jump != 2'b00 || IDEX_JumpJALR_1 == 1'b1)
+        ALUInB_1 = 32'd4;
+    else if (IDEX_ALUSrc_1 == 1'b0)
+        ALUInB_1 = bypassOutB_1;
+    else
+        ALUInB_1 = IDEX_signExtend_1;
+end
+
+// Branch Target Calculation
+assign BranchInA_0 = (IDEX_JumpJALR_0 == 1'b1) ? bypassOutA_0 : IDEX_PC_0;
+assign BranchInA_1 = (IDEX_JumpJALR_1 == 1'b1) ? bypassOutA_1 : IDEX_PC_1;
+
+assign BranchALUOut_0 = BranchInA_0 + IDEX_signExtend_0;
+assign BranchALUOut_1 = BranchInA_1 + IDEX_signExtend_1;
+
+// ALU 0
+ALUCPU cpu_alu_0(		
+	.out(ALUOut_0),
+	.zero(Zero_0),	
+	.overflow(overflow_0),
+	.inA(ALUInA_0),
+	.inB(ALUInB_0),
+	.op(ALUOp_0)
 );
-assign RegWriteAddr = (IDEX_RegDst==1'b0) ? IDEX_instr_rs2 : IDEX_instr_rd;
-fpu FPU(
-	.FPUOp(FPUOp),
-	.number1((ALUInA[30:23] == 8'hFF) ? ((ALUInB[30:23]!= 8'hFF) ? 0 : ALUInA) : ALUInA),
-	.number2(ALUInB[30:23] == 8'hFF ? 0 : ALUInB),
-	.out(FPUOut)
+
+// ALU 1
+ALUCPU cpu_alu_1(		
+	.out(ALUOut_1),
+	.zero(Zero_1),	
+	.overflow(overflow_1),
+	.inA(ALUInA_1),
+	.inB(ALUInB_1),
+	.op(ALUOp_1)
 );
+
+assign RegWriteAddr_0 = (IDEX_RegDst_0 == 1'b0) ? IDEX_instr0_rs2 : IDEX_instr0_rd;
+assign RegWriteAddr_1 = (IDEX_RegDst_1 == 1'b0) ? IDEX_instr1_rs2 : IDEX_instr1_rd;
+
+fpu FPU_0(
+	.FPUOp(FPUOp_0),
+	.number1((ALUInA_0[30:23] == 8'hFF) ? ((ALUInB_0[30:23]!= 8'hFF) ? 0 : ALUInA_0) : ALUInA_0),
+	.number2(ALUInB_0[30:23] == 8'hFF ? 0 : ALUInB_0),
+	.out(FPUOut_0)
+);
+
+fpu FPU_1(
+	.FPUOp(FPUOp_1),
+	.number1((ALUInA_1[30:23] == 8'hFF) ? ((ALUInB_1[30:23]!= 8'hFF) ? 0 : ALUInA_1) : ALUInA_1),
+	.number2(ALUInB_1[30:23] == 8'hFF ? 0 : ALUInB_1),
+	.out(FPUOut_1)
+);
+
 // DIVISION UNIT
-division_unit DU(
+division_unit DU_0(
 	.clk(clock),
 	.reset(!reset),
-	.ALUOp(ALUOp),
-	.cpu_divcy(local_divcy),
-	.du_divcy(divcy),
-	.trapdiv(trapdiv),
-	.inA(ALUInA), //otherwise IDEX_rdA
-	.inB(ALUInB), // otherwise IDEX_rdB
-	.rem(divrem),
-	.quo(divres)	
+	.ALUOp(ALUOp_0),
+	.cpu_divcy(local_divcy_0),
+	.du_divcy(divcy_0),
+	.trapdiv(trapdiv_0),
+	.inA(ALUInA_0), //otherwise IDEX_rdA
+	.inB(ALUInB_0), // otherwise IDEX_rdB
+	.rem(divrem_0),
+	.quo(divres_0)	
 );
+
+division_unit DU_1(
+	.clk(clock),
+	.reset(!reset),
+	.ALUOp(ALUOp_1),
+	.cpu_divcy(local_divcy_1),
+	.du_divcy(divcy_1),
+	.trapdiv(trapdiv_1),
+	.inA(ALUInA_1), //otherwise IDEX_rdA
+	.inB(ALUInB_1), // otherwise IDEX_rdB
+	.rem(divrem_1),
+	.quo(divres_1)
+);
+
 // EXMEM pipeline register
 always @(posedge clock or negedge reset)
 begin
 	if(local_divcy == 6'd32 && divcy != 6'd32)begin
 		local_divcy <= divcy;
 	end
+
 	if(local_divcy != 6'd32)begin
 		local_divcy <= local_divcy-1;
 	end
+
 	if(local_divcy == 6'd0)begin
 		local_divcy <= 6'd32;
 	end
+
 	if ((reset == 1'b0)) begin
-		local_divcy			<= 6'd32;
-		EXMEM_ALUOut		<= 32'b0;
-		EXMEM_JumpJALR 		<= 1'b0;
-		EXMEM_BranchALUOut	<= 32'b0;
-		EXMEM_RegWriteAddr	<= 5'b0;
-		EXMEM_MemWriteData	<= 32'b0;
-		EXMEM_Zero			<= 1'b0;
-		EXMEM_Branch		<= 1'b0;
-		EXMEM_MemRead		<= 1'b0;
-		EXMEM_MemWrite		<= 1'b0;
-		EXMEM_MemToReg		<= 1'b0;
-		EXMEM_RegWrite		<= 1'b0;
+		local_divcy_0		<= 6'd32;
+		local_divcy_1		<= 6'd32;
+		EXMEM_ALUOut_0		<= 32'b0;
+		EXMEM_ALUOut_1		<= 32'b0;
+		EXMEM_JumpJALR_0	<= 1'b0;
+		EXMEM_JumpJALR_1	<= 1'b0;
+		EXMEM_BranchALUOut_0<= 32'b0;
+		EXMEM_BranchALUOut_1<= 32'b0;
+		EXMEM_RegWriteAddr_0<= 5'b0;
+		EXMEM_RegWriteAddr_1<= 5'b0;
+		EXMEM_MemWriteData_0<= 32'b0;
+		EXMEM_MemWriteData_1<= 32'b0;
+		EXMEM_Zero_0		<= 1'b0;
+		EXMEM_Zero_1		<= 1'b0;
+		EXMEM_Branch_0		<= 1'b0;
+		EXMEM_Branch_1		<= 1'b0;
+		EXMEM_MemRead_0		<= 1'b0;
+		EXMEM_MemRead_1		<= 1'b0;
+		EXMEM_MemWrite_0	<= 1'b0;
+		EXMEM_MemWrite_1	<= 1'b0;
+		EXMEM_MemToReg_0	<= 1'b0;
+		EXMEM_MemToReg_1	<= 1'b0;
+		EXMEM_RegWrite_0	<= 1'b0;
+		EXMEM_RegWrite_1	<= 1'b0;
 		EXMEM_funct3_0		<= 3'b0;
 		EXMEM_funct3_1		<= 3'b0;
-		EXMEM_csr_data		<= 32'b0;
+		EXMEM_csr_data_0	<= 32'b0;
+		EXMEM_csr_data_1	<= 32'b0;
 		EXMEM_reg_type_0	<= 3'b000;
 		EXMEM_reg_type_1	<= 3'b000;
-		EXMEM_csr_addr		<= 12'b0;
-		EXMEM_csr_write_allowed <= 1'b0;
-		EXMEM_PC			<= 32'hffffffff;
-		EXMEM_instr			<= 32'b0;
+		EXMEM_csr_addr_0	<= 12'b0;
+		EXMEM_csr_addr_1	<= 12'b0;
+		EXMEM_csr_write_allowed_0 <= 1'b0;
+		EXMEM_csr_write_allowed_1 <= 1'b0;
+		EXMEM_PC_0			<= 32'hffffffff;
+		EXMEM_PC_1			<= 32'hffffffff;
+		EXMEM_instr_0		<= 32'b0;
+		EXMEM_instr_1		<= 32'b0;
 	end 
 	else
 	begin
-		if ((bubble_exmem == 1'b1)) begin
-			EXMEM_ALUOut		<= 32'b0;
-			EXMEM_JumpJALR 		<= 1'b0;
-			EXMEM_BranchALUOut	<= 32'b0;
-			EXMEM_RegWriteAddr	<= 5'b0;
-			EXMEM_MemWriteData	<= 32'b0;
-			EXMEM_Zero			<= 1'b0;
-			EXMEM_Branch		<= 1'b0;
-			EXMEM_MemRead		<= 1'b0;
-			EXMEM_MemWrite		<= 1'b0;
-			EXMEM_MemToReg		<= 1'b0;
-			EXMEM_RegWrite		<= 1'b0;
+		if ((bubble_exmem_0)) begin
+			EXMEM_ALUOut_0		<= 32'b0;
+			EXMEM_JumpJALR_0	<= 1'b0;
+			EXMEM_BranchALUOut_0<= 32'b0;
+			EXMEM_RegWriteAddr_0<= 5'b0;
+			EXMEM_MemWriteData_0<= 32'b0;
+			EXMEM_Zero_0		<= 1'b0;
+			EXMEM_Branch_0		<= 1'b0;
+			EXMEM_MemRead_0		<= 1'b0;
+			EXMEM_MemWrite_0	<= 1'b0;
+			EXMEM_MemToReg_0	<= 1'b0;
+			EXMEM_RegWrite_0	<= 1'b0;
 			EXMEM_funct3_0		<= 3'b0;
-			EXMEM_funct3_1		<= 3'b0;
-			EXMEM_csr_data		<= 32'b0;
+			EXMEM_csr_data_0	<= 32'b0;
 			EXMEM_reg_type_0	<= 3'b000;
-			EXMEM_reg_type_1	<= 3'b000;
-			EXMEM_csr_addr		<= 12'b0;
-			EXMEM_csr_write_allowed <= 1'b0;
-			EXMEM_PC			<= 32'hffffffff;
-			EXMEM_instr			<= 32'b0;
+			EXMEM_csr_addr_0	<= 12'b0;
+			EXMEM_csr_write_allowed_0 <= 1'b0;
+			EXMEM_PC_0			<= 32'hffffffff;
+			EXMEM_instr_0		<= 32'b0;
 		end 
-		else if (write_exmem == 1'b1) begin
-			EXMEM_ALUOut		<= divres ? divres : ((IDEX_reg_type == 3'b010) ? FPUOut : ALUOut); // ALLAGMA *2
-			EXMEM_JumpJALR		<= IDEX_JumpJALR;
-			EXMEM_BranchALUOut	<= BranchALUOut;
-			EXMEM_RegWriteAddr	<= RegWriteAddr;
-			EXMEM_MemWriteData	<= bypassOutB;
-			EXMEM_Zero			<= Zero;
-			EXMEM_Branch		<= IDEX_Branch;
-			EXMEM_MemRead		<= IDEX_MemRead;
-			EXMEM_MemWrite		<= IDEX_MemWrite;
-			EXMEM_MemToReg		<= IDEX_MemToReg;
-			EXMEM_RegWrite		<= IDEX_RegWrite;
+		else if (write_exmem_0) begin
+			EXMEM_ALUOut_0		<= divres_0 ? divres_0 : ((IDEX_reg_type_0 == 3'b010) ? FPUOut_0 : ALUOut_0);
+			EXMEM_JumpJALR_0	<= IDEX_JumpJALR_0;
+			EXMEM_BranchALUOut_0<= BranchALUOut_0;
+			EXMEM_RegWriteAddr_0<= RegWriteAddr_0;
+			EXMEM_MemWriteData_0<= bypassOutB_0;
+			EXMEM_Zero_0		<= Zero_0;
+			EXMEM_Branch_0		<= IDEX_Branch_0;
+			EXMEM_MemRead_0		<= IDEX_MemRead_0;
+			EXMEM_MemWrite_0	<= IDEX_MemWrite_0;
+			EXMEM_MemToReg_0	<= IDEX_MemToReg_0;
+			EXMEM_RegWrite_0	<= IDEX_RegWrite_0;
 			EXMEM_funct3_0		<= IDEX_funct3_0;
-			EXMEM_funct3_1		<= IDEX_funct3_1;
-			EXMEM_csr_data		<= csr_data;
+			EXMEM_csr_data_0	<= csr_data_0;
 			EXMEM_reg_type_0	<= IDEX_reg_type_0;
+			EXMEM_csr_addr_0	<= IDEX_csr_addr_0;
+			EXMEM_csr_write_allowed_0 <= IDEX_csr_write_allowed_0;
+			EXMEM_PC_0			<= IDEX_PC_0;
+			EXMEM_instr_0		<= IDEX_instr_0;
+		end
+
+		if ((bubble_exmem_1)) begin
+			EXMEM_ALUOut_1		<= 32'b0;
+			EXMEM_JumpJALR_1	<= 1'b0;
+			EXMEM_BranchALUOut_1<= 32'b0;
+			EXMEM_RegWriteAddr_1<= 5'b0;
+			EXMEM_MemWriteData_1<= 32'b0;
+			EXMEM_Zero_1		<= 1'b0;
+			EXMEM_Branch_1		<= 1'b0;
+			EXMEM_MemRead_1		<= 1'b0;
+			EXMEM_MemWrite_1	<= 1'b0;
+			EXMEM_MemToReg_1	<= 1'b0;
+			EXMEM_RegWrite_1	<= 1'b0;
+			EXMEM_funct3_1		<= 3'b0;
+			EXMEM_csr_data_1	<= 32'b0;
+			EXMEM_reg_type_1	<= 3'b000;
+			EXMEM_csr_addr_1	<= 12'b0;
+			EXMEM_csr_write_allowed_1 <= 1'b0;
+			EXMEM_PC_1			<= 32'hffffffff;
+			EXMEM_instr_1		<= 32'b0;
+		end 
+		else if (write_exmem_1) begin
+			EXMEM_ALUOut_1		<= divres_1 ? divres_1 : ((IDEX_reg_type_1 == 3'b010) ? FPUOut_1 : ALUOut_1);
+			EXMEM_JumpJALR_1	<= IDEX_JumpJALR_1;
+			EXMEM_BranchALUOut_1<= BranchALUOut_1;
+			EXMEM_RegWriteAddr_1<= RegWriteAddr_1;
+			EXMEM_MemWriteData_1<= bypassOutB_1;
+			EXMEM_Zero_1		<= Zero_1;
+			EXMEM_Branch_1		<= IDEX_Branch_1;
+			EXMEM_MemRead_1		<= IDEX_MemRead_1;
+			EXMEM_MemWrite_1	<= IDEX_MemWrite_1;
+			EXMEM_MemToReg_1	<= IDEX_MemToReg_1;
+			EXMEM_RegWrite_1	<= IDEX_RegWrite_1;
+			EXMEM_funct3_1		<= IDEX_funct3_1;
+			EXMEM_csr_data_1	<= csr_data_1;
 			EXMEM_reg_type_1	<= IDEX_reg_type_1;
-			EXMEM_csr_addr		<= IDEX_csr_addr;
-			EXMEM_csr_write_allowed <= IDEX_csr_write_allowed;
-			EXMEM_PC			<= IDEX_PC;
-			EXMEM_instr			<= IDEX_instr;
+			EXMEM_csr_addr_1	<= IDEX_csr_addr_1;
+			EXMEM_csr_write_allowed_1 <= IDEX_csr_write_allowed_1;
+			EXMEM_PC_1			<= IDEX_PC_1;
+			EXMEM_instr_1		<= IDEX_instr_1;
 		end
 	end
 end
 
 // ALU control unit
 // Determines the ALU operation based on the instruction
-control_ex control_ex(
-	.ALUOp(ALUOp),
-	.FPUOp(FPUOp), 
-	.EXcntrl(IDEX_EXcntrl), 
-	.csr_immidiate(csr_immidiate),
-	.rs2(IDEX_instr_rs2),
-	.funct3(IDEX_funct3), 
-	.funct7(IDEX_funct7)
+control_ex control_ex_0(
+	.ALUOp(ALUOp_0),
+	.FPUOp(FPUOp_0), 
+	.EXcntrl(IDEX_EXcntrl_0), 
+	.csr_immidiate(csr_immidiate_0),
+	.rs2(IDEX_instr0_rs2),
+	.funct3(IDEX_funct3_0), 
+	.funct7(IDEX_funct7_0)
+);
+
+control_ex control_ex_1(
+	.ALUOp(ALUOp_1),
+	.FPUOp(FPUOp_1), 
+	.EXcntrl(IDEX_EXcntrl_1), 
+	.csr_immidiate(csr_immidiate_1),
+	.rs2(IDEX_instr1_rs2),
+	.funct3(IDEX_funct3_1), 
+	.funct7(IDEX_funct7_1)
 );
 
 // Bypass control
@@ -917,117 +1114,200 @@ control_bypass_ex control_bypass_ex(
 
 
 /*********************************** Memory Unit (MEM)  ********************************************/
-mem_write_selector mem_write_selector(
-	.mem_select(EXMEM_funct3),	// ALLAGMA *2
-	.ALUin(EXMEM_MemWriteData),
-	.offset(EXMEM_ALUOut[1:0]),
-	.byte_select_vector(byte_select_vector),
-	.out(MemWriteData)
+mem_write_selector mem_write_selector_0(
+	.mem_select(EXMEM_funct3_0),	// ALLAGMA *2
+	.ALUin(EXMEM_MemWriteData_0),
+	.offset(EXMEM_ALUOut_0[1:0]),
+	.byte_select_vector(byte_select_vector_0),
+	.out(MemWriteData_0)
 );
-// 	.din(MemWriteData), 
-// 	.dout(DMemOut)
-// );
+
+mem_write_selector mem_write_selector_1(
+	.mem_select(EXMEM_funct3_1),	// ALLAGMA *2
+	.ALUin(EXMEM_MemWriteData_1),
+	.offset(EXMEM_ALUOut_1[1:0]),
+	.byte_select_vector(byte_select_vector_1),
+	.out(MemWriteData_1)
+);
 
 // MEMWB pipeline register
 always @(posedge clock or negedge reset)
 begin 
 	if (reset == 1'b0) begin
-		MEMWB_DMemOut		<= 32'b0;
-		MEMWB_ALUOut		<= 32'b0;
-		MEMWB_RegWriteAddr	<= 5'b0;
-		MEMWB_MemToReg		<= 1'b0;
-		MEMWB_RegWrite		<= 1'b0;
-		MEMWB_funct3		<= 3'b0;
-		MEMWB_csr_data		<= 32'b0;
+		MEMWB_DMemOut_0		<= 32'b0;
+		MEMWB_DMemOut_1		<= 32'b0;
+		MEMWB_ALUOut_0		<= 32'b0;
+		MEMWB_ALUOut_1		<= 32'b0;
+		MEMWB_RegWriteAddr_0<= 5'b0;
+		MEMWB_RegWriteAddr_1<= 5'b0;
+		MEMWB_MemToReg_0	<= 1'b0;
+		MEMWB_MemToReg_1	<= 1'b0;
+		MEMWB_RegWrite_0	<= 1'b0;
+		MEMWB_RegWrite_1	<= 1'b0;
+		MEMWB_funct3_0		<= 3'b0;
+		MEMWB_funct3_1		<= 3'b0;
+		MEMWB_csr_data_0	<= 32'b0;
+		MEMWB_csr_data_1	<= 32'b0;
 		MEMWB_reg_type_0	<= 3'b000;
 		MEMWB_reg_type_1	<= 3'b000;
-		MEMWB_csr_addr		<= 12'b0;
-		MEMWB_csr_write_allowed <= 1'b0;
-		MEMWB_PC			<= 32'b0;
-		MEMWB_instr			<= 32'b0;
+		MEMWB_csr_addr_0	<= 12'b0;
+		MEMWB_csr_addr_1	<= 12'b0;
+		MEMWB_csr_write_allowed_0 <= 1'b0;
+		MEMWB_csr_write_allowed_1 <= 1'b0;
+		MEMWB_PC_0			<= 32'b0;
+		MEMWB_PC_1			<= 32'b0;
+		MEMWB_instr_0		<= 32'b0;
+		MEMWB_instr_1		<= 32'b0;
 	end 
 	else 
 	begin
-		if(bubble_memwb == 1'b1) begin
-			MEMWB_DMemOut		<= 32'b0;
-			MEMWB_ALUOut		<= 32'b0;
-			MEMWB_RegWriteAddr	<= 5'b0;
-			MEMWB_MemToReg		<= 1'b0;
-			MEMWB_RegWrite		<= 1'b0;
-			MEMWB_funct3		<= 3'b0;
-			MEMWB_csr_data		<= 32'b0;
+		if(bubble_memwb_0) begin
+			MEMWB_DMemOut_0		<= 32'b0;
+			MEMWB_ALUOut_0		<= 32'b0;
+			MEMWB_RegWriteAddr_0<= 5'b0;
+			MEMWB_MemToReg_0	<= 1'b0;
+			MEMWB_RegWrite_0	<= 1'b0;
+			MEMWB_funct3_0		<= 3'b0;
+			MEMWB_csr_data_0	<= 32'b0;
 			MEMWB_reg_type_0	<= 3'b000;
-			MEMWB_reg_type_1	<= 3'b000;
-			MEMWB_csr_addr		<= 12'b0;
-			MEMWB_csr_write_allowed <= 1'b0;
-			MEMWB_PC			<= 32'hffffffff;
-			MEMWB_instr			<= 32'b0;
+			MEMWB_csr_addr_0	<= 12'b0;
+			MEMWB_csr_write_allowed_0 <= 1'b0;
+			MEMWB_PC_0			<= 32'hffffffff;
+			MEMWB_instr_0		<= 32'b0;
 		end 
-		else if (write_memwb == 1'b1) begin
-			MEMWB_DMemOut		<= DMemOut;
-			MEMWB_ALUOut		<= EXMEM_ALUOut;
-			MEMWB_RegWriteAddr	<= EXMEM_RegWriteAddr;
-			MEMWB_MemToReg		<= EXMEM_MemToReg;
-			MEMWB_RegWrite		<= EXMEM_RegWrite;
-			MEMWB_funct3		<= EXMEM_funct3;
-			MEMWB_csr_data		<= EXMEM_csr_data;
+		else if (write_memwb_0) begin
+			MEMWB_DMemOut_0		<= DMemOut_0;
+			MEMWB_ALUOut_0		<= EXMEM_ALUOut_0;
+			MEMWB_RegWriteAddr_0<= EXMEM_RegWriteAddr_0;
+			MEMWB_MemToReg_0	<= EXMEM_MemToReg_0;
+			MEMWB_RegWrite_0	<= EXMEM_RegWrite_0;
+			MEMWB_funct3_0		<= EXMEM_funct3_0;
+			MEMWB_csr_data_0	<= EXMEM_csr_data_0;
 			MEMWB_reg_type_0	<= EXMEM_reg_type_0;
+			MEMWB_csr_addr_0	<= EXMEM_csr_addr_0;
+			MEMWB_csr_write_allowed_0 <= EXMEM_csr_write_allowed_0;
+			MEMWB_PC_0			<= EXMEM_PC_0;
+			MEMWB_instr_0		<= EXMEM_instr_0;
+		end
+
+		if(bubble_memwb_1) begin
+			MEMWB_DMemOut_1		<= 32'b0;
+			MEMWB_ALUOut_1		<= 32'b0;
+			MEMWB_RegWriteAddr_1<= 5'b0;
+			MEMWB_MemToReg_1	<= 1'b0;
+			MEMWB_RegWrite_1	<= 1'b0;
+			MEMWB_funct3_1		<= 3'b0;
+			MEMWB_csr_data_1	<= 32'b0;
+			MEMWB_reg_type_1	<= 3'b000;
+			MEMWB_csr_addr_1	<= 12'b0;
+			MEMWB_csr_write_allowed_1 <= 1'b0;
+			MEMWB_PC_1			<= 32'hffffffff;
+			MEMWB_instr_1		<= 32'b0;
+		end 
+		else if (write_memwb_1) begin
+			MEMWB_DMemOut_1		<= DMemOut_1;
+			MEMWB_ALUOut_1		<= EXMEM_ALUOut_1;
+			MEMWB_RegWriteAddr_1<= EXMEM_RegWriteAddr_1;
+			MEMWB_MemToReg_1	<= EXMEM_MemToReg_1;
+			MEMWB_RegWrite_1	<= EXMEM_RegWrite_1;
+			MEMWB_funct3_1		<= EXMEM_funct3_1;
+			MEMWB_csr_data_1	<= EXMEM_csr_data_1;
 			MEMWB_reg_type_1	<= EXMEM_reg_type_1;
-			MEMWB_csr_addr		<= EXMEM_csr_addr;
-			MEMWB_csr_write_allowed <= EXMEM_csr_write_allowed;
-			MEMWB_PC			<= EXMEM_PC;
-			MEMWB_instr			<= EXMEM_instr;
+			MEMWB_csr_addr_1	<= EXMEM_csr_addr_1;
+			MEMWB_csr_write_allowed_1 <= EXMEM_csr_write_allowed_1;
+			MEMWB_PC_1			<= EXMEM_PC_1;
+			MEMWB_instr_1		<= EXMEM_instr_1;
 		end
 	end
 end
 
 // Branch control unit
-control_branch control_branch (
-	.branch_taken(branch_taken),
-	.funct3(EXMEM_funct3),
-	.Branch(EXMEM_Branch),
-	.zero(EXMEM_Zero),
-	.sign(EXMEM_ALUOut[31])
+control_branch control_branch_0 (
+	.branch_taken(branch_taken_0),
+	.funct3(EXMEM_funct3_0),
+	.Branch(EXMEM_Branch_0),
+	.zero(EXMEM_Zero_0),
+	.sign(EXMEM_ALUOut_0[31])
 );
 
-assign PCSrc = (EXMEM_JumpJALR) ? 1'b1 : branch_taken;
+control_branch control_branch_1 (
+	.branch_taken(branch_taken_1),
+	.funct3(EXMEM_funct3_1),
+	.Branch(EXMEM_Branch_1),
+	.zero(EXMEM_Zero_1),
+	.sign(EXMEM_ALUOut_1[31])
+);
+
+assign PCSrc_0 = (EXMEM_JumpJALR_0) ? 1'b1 : branch_taken_0;
+assign PCSrc_1 = (EXMEM_JumpJALR_1) ? 1'b1 : branch_taken_1;
 
 /**************************** WriteBack Unit (WB) **************************/  
-mem_read_selector mem_read_selector(
-	.mem_select(MEMWB_funct3),
-	.DMemOut(MEMWB_DMemOut),
-	.byte_index(MEMWB_ALUOut[1:0]),
-	.out(MemOut)
+mem_read_selector mem_read_selector_0 (
+	.mem_select(MEMWB_funct3_0),
+	.DMemOut(MEMWB_DMemOut_0),
+	.byte_index(MEMWB_ALUOut_0[1:0]),
+	.out(MemOut_0)
 );
 
-// ALLAGMA *2
+mem_read_selector mem_read_selector_1 (
+	.mem_select(MEMWB_funct3_1),
+	.DMemOut(MEMWB_DMemOut_1),
+	.byte_index(MEMWB_ALUOut_1[1:0]),
+	.out(MemOut_1)
+);
+
 always @(*) begin
-	if (MEMWB_reg_type != 3'b001) begin
+	if (MEMWB_reg_type_0 != 3'b001) begin
 		// if we are not writing to memory get the data from the ALU
-		if (MEMWB_MemToReg == 1'b0) begin
-			wRegData = MEMWB_ALUOut;
+		if (MEMWB_MemToReg_0 == 1'b0) begin
+			wRegData_0 = MEMWB_ALUOut_0;
 		// if we are writing to memory get the data from the memory
 		end else begin
-			wRegData = MemOut;
+			wRegData_0 = MemOut_0;
 		end
 	end else begin
-		wRegData = MEMWB_csr_data;
+		wRegData_0 = MEMWB_csr_data_0;
 	end
-end
-always @(*)
-begin 
-	if (write_memwb == 1'b1) begin
+
+	if (MEMWB_reg_type_1 != 3'b001) begin
 		// if we are not writing to memory get the data from the ALU
-		if (MEMWB_MemToReg == 1'b0) begin
-			WB_csr_data = MEMWB_ALUOut;
+		if (MEMWB_MemToReg_1 == 1'b0) begin
+			wRegData_1 = MEMWB_ALUOut_1;
 		// if we are writing to memory get the data from the memory
 		end else begin
-			WB_csr_data = MemOut;
+			wRegData_1 = MemOut_1;
+		end
+	end else begin
+		wRegData_1 = MEMWB_csr_data_1;
+	end
+end
+
+always @(*)
+begin 
+	if (write_memwb_0 == 1'b1) begin
+		// if we are not writing to memory get the data from the ALU
+		if (MEMWB_MemToReg_0 == 1'b0) begin
+			WB_csr_data_0 = MEMWB_ALUOut_0;
+		// if we are writing to memory get the data from the memory
+		end else begin
+			WB_csr_data_0 = MemOut_0;
 		end
 	end
-	else
-	begin
-		WB_csr_data = 0;
+	else begin
+		WB_csr_data_0 = 0;
+	end
+
+	if (write_memwb_1 == 1'b1) begin
+		// if we are not writing to memory get the data from the ALU
+		if (MEMWB_MemToReg_1 == 1'b0) begin
+			WB_csr_data_1 = MEMWB_ALUOut_1;
+		// if we are writing to memory get the data from the memory
+		end else begin
+			WB_csr_data_1 = MemOut_1;
+		end
+	end
+	else begin
+		WB_csr_data_1 = 0;
 	end
 end
 
