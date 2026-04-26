@@ -12,23 +12,24 @@
 /*  R-format: add, sub, and, or, xor, slt                                                */
 /*  addi, lw, sw, beq, j                                                                 */
 /*****************************************************************************************/
-module cpu(	input clock,
-			input reset,
-			output overflow,
-			output 	[31:0] PC_out,
-			input  	[31:0] instr_in,
-			output 	[31:0] data_addr,
-			output ren,
-			output wen,
-			output instr_en,
-			output 	[31:0] data_out,
+module cpu(	input	clock,
+			input 	reset,
+			input  	[31:0] instr_in0,
+			input	[31:0] instr_in1,
 			input 	[31:0] data_in,
+			input 	software_interrupt,
+			input 	timer_interrupt,
+			input 	external_interrupt,
+			input 	memReady,
+			output 	overflow,
+			output 	[31:0] PC_out,
+			output 	[31:0] data_addr,
+			output 	ren,
+			output 	wen,
+			output 	instr_en,
+			output 	[31:0] data_out,
 			output 	[3:0]  byte_select,
-			input software_interrupt,
-			input timer_interrupt,
-			input external_interrupt,
-			output write_pc_out,
-			input memReady
+			output 	write_pc_out
 			);
 // // Data memory 1KB
 // Dmem cpu_DMem(
@@ -41,39 +42,42 @@ module cpu(	input clock,
 // 	.din(MemWriteData), 
 // 	.dout(DMemOut)
 // );
-reg		[31:0]	IFID_instr;
+reg		[31:0]	IFID_instr0;
+reg		[31:0]	IFID_instr1;
 reg 	[31:0]  PC_IF2;
 reg		[31:0]	PC, PC_OLD, IFID_PC, IDEX_PC, EXMEM_PC, MEMWB_PC;
-wire	[31:0]	PCplus4, JumpAddress;
-reg 	[31:0] PC_new;
-wire	[31:0]	instr;
-reg	[31:0]	IF2_instr;
-reg	[31:0]	IDEX_instr;
-reg	[31:0]	EXMEM_instr;
-reg	[31:0]	MEMWB_instr;
-reg     [31:0]  delayed_instr;
-wire		inA_is_PC, branch_taken;
+wire	[31:0]	PCplus4, JumpAddress0, JumpAddress1;
+reg 	[31:0] 	PC_new;
+reg		[31:0]	IF2_instr0;
+reg     [31:0]  IF2_instr1;
+reg		[31:0]	IDEX_instr;
+reg		[31:0]	EXMEM_instr;
+reg		[31:0]	MEMWB_instr;
+reg     [31:0]  delayed_instr0;
+reg		[31:0]	delayed_instr1;
+wire			inA_is_PC, branch_taken;
 wire	[31:0]	BranchInA;
-reg		[31:0]	IDEX_signExtend;
-wire	[31:0]	signExtend;
+reg		[31:0]	IDEX_signExtend0, IDEX_signExtend1;
+wire	[31:0]	signExtend0, signExtend1;
 wire	[31:0]	rdA, rdB;
-wire	[31:0] FPUOut;
+wire	[31:0] 	FPUOut;
 reg		[31:0]	IDEX_rdA, IDEX_rdB;
-reg		[2:0]	IDEX_funct3;
+reg		[2:0]	IDEX_funct3_0, IDEX_funct3_1;
 reg		[6:0]	IDEX_funct7;
 reg		[4:0]	IDEX_instr_rs2, IDEX_instr_rs1, IDEX_instr_rd;
-reg				IDEX_RegDst, IDEX_ALUSrc, IDEX_inA_is_PC, IDEX_Jump, IDEX_JumpJALR;
-reg 	[2:0] 	IDEX_reg_type;
+reg				IDEX_RegDst, IDEX_ALUSrc, IDEX_inA_is_PC, IDEX_JumpJALR;
+reg 	[1:0]	IDEX_Jump;
+reg 	[2:0] 	IDEX_reg_type_0, IDEX_reg_type_1;
 reg		[3:0]	IDEX_EXcntrl;
 reg				IDEX_MemRead, IDEX_MemWrite;
 reg				IDEX_MemToReg, IDEX_RegWrite;
-reg 	[2:0]	EXMEM_funct3, MEMWB_funct3;
+reg 	[2:0]	EXMEM_funct3_0, EXMEM_funct3_1, MEMWB_funct3_0, MEMWB_funct3_1;
 reg 	[4:0]	EXMEM_RegWriteAddr;
 reg 	[31:0]	EXMEM_ALUOut;
 reg 	[31:0]	EXMEM_BranchALUOut;
-reg 	[2:0] 	EXMEM_reg_type;
+reg 	[2:0] 	EXMEM_reg_type_0, EXMEM_reg_type_1;
 reg				EXMEM_Zero, EXMEM_JumpJALR;
-wire		[3:0]	byte_select_vector;
+wire	[3:0]	byte_select_vector;
 reg		[31:0]	EXMEM_MemWriteData;
 wire	[31:0]	MemWriteData;
 reg				EXMEM_MemRead, EXMEM_MemWrite, EXMEM_RegWrite, EXMEM_MemToReg;
@@ -81,7 +85,7 @@ reg		[31:0]	MEMWB_DMemOut;
 reg		[4:0]	MEMWB_RegWriteAddr;
 reg		[31:0]	MEMWB_ALUOut;
 reg				MEMWB_MemToReg, MEMWB_RegWrite;
-reg 	[2:0] 	MEMWB_reg_type;
+reg 	[2:0] 	MEMWB_reg_type_0, MEMWB_reg_type_1;
 // alu signals
 reg 	[31:0] 	ALUInA, ALUInB;
 wire 	[31:0] 	bypassOutA, bypassOutB;
@@ -89,14 +93,15 @@ wire	[31:0]	ALUOut, BranchALUOut, DMemOut, MemOut;
 wire	[31:0]	divrem, divres;
 reg     [31:0]  wRegData;
 reg     [31:0]  WB_csr_data;
-wire			Zero, RegDst, MemRead, MemWrite, MemToReg, ALUSrc, PCSrc, RegWrite, Jump, JumpJALR;
-wire 	[2:0] 	reg_type; // used to determin if we are using the x0-x31 registers, csr registers or f1-f32 registers. 0->x register 1->csr register 2->f register 
+wire			Zero, RegDst, MemRead, MemWrite, MemToReg, ALUSrc, PCSrc, RegWrite, JumpJALR;
+wire 	[1:0]	Jump;
+wire 	[2:0] 	reg_type_0, reg_type_1; // used to determin if we are using the x0-x31 registers, csr registers or f1-f32 registers. 0->x register 1->csr register 2->f register 
 wire			Branch;
 reg				IDEX_Branch, EXMEM_Branch;
 wire			bubble_ifid, bubble_idex, bubble_exmem, bubble_memwb;   // create a NOP in respective stages
 wire			write_ifid, write_idex, write_exmem, write_memwb, write_pc;  // enable/disable pipeline registers
-wire	[6:0]	opcode;
-wire	[3:0]	funct3, EXcntrl; 
+wire	[6:0]	opcode0, opcode1;
+wire	[3:0]	funct3_0, funct3_1, EXcntrl; 
 // csr registers
 
 // csr file output
@@ -104,15 +109,15 @@ wire 	[31:0] 	csr_data;
 reg 	[31:0] 	EXMEM_csr_data;
 reg 	[31:0] 	MEMWB_csr_data;
 // csr write address
-wire 	[11:0]	csr_addr;
+wire 	[11:0]	csr_addr0, csr_addr1;
 reg 	[11:0]	IDEX_csr_addr;
 reg 	[11:0]	EXMEM_csr_addr;
 reg 	[11:0]	MEMWB_csr_addr;
 
-reg 			csr_write_allowed;
-reg 			IDEX_csr_write_allowed;
-reg 			EXMEM_csr_write_allowed;
-reg 			MEMWB_csr_write_allowed;
+reg 			csr_write_allowed_0, csr_write_allowed_1;
+reg 			IDEX_csr_write_allowed_0, IDEX_csr_write_allowed_1;
+reg 			EXMEM_csr_write_allowed_0, EXMEM_csr_write_allowed_1;
+reg 			MEMWB_csr_write_allowed_0, MEMWB_csr_write_allowed_1;
 
 wire       		csr_immidiate;
 reg      		IDEX_csr_immidiate;
@@ -120,27 +125,32 @@ reg      		EXMEM_csr_immidiate;
 reg      		MEMWB_csr_immidiate;
 
 
-reg [5:0] local_divcy;
-wire [5:0] divcy;
-wire	[6:0]	funct7;
-wire	[4:0]	instr_rs1, instr_rs2, instr_rd, RegWriteAddr;
+reg		[5:0]	local_divcy;
+wire	[5:0]	divcy;
+wire	[6:0]	funct7_0, funct7_1;
+wire	[4:0]	instr0_rs1, instr0_rs2, instr0_rd, RegWriteAddr;
+wire	[4:0]	instr1_rs1, instr1_rs2, instr1_rd;
 wire	[4:0]	ALUOp;
 wire 	[4:0]	FPUOp; // one bit long thus far, improvements will be added
 wire	[1:0]	bypassA, bypassB;
-wire	[31:0]	imm_i, imm_s, imm_b, imm_u, imm_j, imm_z;
-reg keepDelayInstr=0;
+wire	[31:0]	imm_i_0, imm_s_0, imm_b_0, imm_u_0, imm_j_0, imm_z_0;
+wire	[31:0]	imm_i_1, imm_s_1, imm_b_1, imm_u_1, imm_j_1, imm_z_1;
+reg				keepDelayInstr=0;
 
 // trap handler signals
-wire int_taken;
-wire [31:0] trap_vector;
-wire syscall, trap_waiting;
-wire trap_in_ID;
+wire 			int_taken;
+wire	[31:0]	trap_vector;
+wire			syscall, trap_waiting;
+wire			trap_in_ID;
 // reg trap_in_EX=0;
 // reg trap_in_MEM=0;
 
+wire	[31:0]	instr;
+wire	[31:0]	instr1;
 
 assign PC_out = PC;
-assign instr = instr_in;
+assign instr0 = instr_in0;
+assign instr1 = instr_in1;
 assign write_pc_out = write_pc;
 assign data_addr = (ren==1'b1)?ALUOut:EXMEM_ALUOut;
 assign ren = IDEX_MemRead&(~branch_taken);
@@ -196,17 +206,21 @@ begin
 			else begin
 				PC_IF2 <= PC;
 			end
+
 			bubble_ifid_delayed <= bubble_ifid;
-			delayed_instr <= 0;
+			delayed_instr0 <= 0;
+			delayed_instr1 <= 0;
 			keepDelayInstr <= 0;
 		end
 		else begin
 			if(bubble_ifid == 1'b1||bubble_ifid_delayed == 1'b1)begin
 				PC_IF2 <= 32'hffffffff;
 			end
-			if(keepDelayInstr ==1'b0) begin
-				keepDelayInstr <= 1;
-				delayed_instr <= (PCSrc)?32'hffffffff: instr;
+
+			if(keepDelayInstr == 1'b0) begin
+				keepDelayInstr <= 1'b1;
+				delayed_instr0 <= (PCSrc) ? 32'hffffffff : instr0;
+				delayed_instr1 <= (PCSrc) ? 32'hffffffff : instr1;
 			end
 		end
 	end
@@ -217,15 +231,18 @@ end
 // also make sure that the cache only handles specific addresses
 always@(*)
 begin
-	if(delayed_instr == 0) begin
-		IF2_instr = instr;
+	if(delayed_instr0 == 0 && delayed_instr1 == 0) begin
+		IF2_instr0 = instr0;
+		IF2_instr1 = instr1;
 	end
 	else begin
 		if(bubble_ifid_delayed == 1'b1) begin
-			IF2_instr = 32'b0;
+			IF2_instr0 = 32'b0;
+			IF2_instr1 = 32'b0;
 		end
 		else begin
-			IF2_instr = delayed_instr;
+			IF2_instr0 = delayed_instr0;
+			IF2_instr1 = delayed_instr1;
 		end
 	end
 
@@ -242,11 +259,17 @@ always @(*) begin
 		PC_new = trap_vector;
 	end
 	else if (PCSrc == 1'b0) begin
-		if (Jump == 1'b0) begin
+		if (Jump == 2'b00) begin
 			PC_new = PC + ((flushPipeline == 1'b1) ? 32'd0 : 32'd4);
 		end
+		else if (Jump == 2'b01) begin
+			PC_new = JumpAddress0;
+		end
+		else if (Jump == 2'b10) begin
+			PC_new = JumpAddress1;
+		end
 		else begin
-			PC_new = JumpAddress;
+			PC_new = 32'hffffffff;
 		end
 	end
 	else begin
@@ -254,7 +277,8 @@ always @(*) begin
 	end
 end
 
-assign JumpAddress = IFID_PC + signExtend;
+assign JumpAddress0 = IFID_PC + signExtend0;
+assign JumpAddress1 = IFID_PC + signExtend1;
 
 
 // IFID pipeline register
@@ -263,98 +287,179 @@ begin
 	if((reset == 1'b0))
 	begin
 		IFID_PC			<= 32'b0;
-		IFID_instr		<= 32'b0;
+		IFID_instr0		<= 32'b0;
+		IFID_instr1		<= 32'b0;
 	end
 	else begin
 		// used to hold bubble in the pipeline. You loose an extra cycle here
 		// This is so that the instruction memory can notice the jump
 		if ((bubble_ifid_delayed||bubble_ifid == 1'b1)) begin
-			IFID_instr		<= 32'b0;
+			IFID_instr0		<= 32'b0;
+			IFID_instr1		<= 32'b0;
 			IFID_PC			<= 32'hffffffff;
 		end 
 		else if (write_ifid == 1'b1) begin
 			IFID_PC			<= PC_IF2;
-			IFID_instr		<= IF2_instr;
+			IFID_instr0		<= IF2_instr0;
+			IFID_instr1		<= IF2_instr1;
 		end
 	end
 end
 
 /***************************** Instruction Decode Unit (ID)  *******************/
-assign opcode		= IFID_instr[6:0];
+
+// INSTRUCTION 0
+assign opcode0		= IFID_instr0[6:0];
 // funct 3 is also used for csr operations
-assign funct3		= IFID_instr[14:12];
-assign funct7		= IFID_instr[31:25];
-assign instr_rs1	= IFID_instr[19:15];
-assign csr_addr		= IFID_instr[31:20];
-assign instr_rs2	= IFID_instr[24:20];
-assign instr_rd		= IFID_instr[11:7];
+assign funct3_0		= IFID_instr0[14:12];
+assign funct7_0		= IFID_instr0[31:25];
+assign instr0_rs1	= IFID_instr0[19:15];
+assign csr_addr0	= IFID_instr0[31:20];
+assign instr0_rs2	= IFID_instr0[24:20];
+assign instr0_rd	= IFID_instr0[11:7];
+
+// INSTRUCTION 1
+assign opcode1		= IFID_instr1[6:0];
+// funct 3 is also used for csr operations
+assign funct3_1		= IFID_instr1[14:12];
+assign funct7_1		= IFID_instr1[31:25];
+assign instr1_rs1	= IFID_instr1[19:15];
+assign csr_addr1	= IFID_instr1[31:20];
+assign instr1_rs2	= IFID_instr1[24:20];
+assign instr1_rd	= IFID_instr1[11:7];
+
 // can also probably add illegal instruction checks here as well
 // just OR it with syscall and give it to the control stall unit
-assign syscall		= (IDEX_Jump==1'b0 & 
-						IDEX_JumpJALR==1'b0&opcode == `I_ENV_FORMAT & funct3==0) ? 1'b1 : 1'b0;
+assign syscall0 = (IDEX_Jump == 2'b00 & IDEX_JumpJALR == 1'b0 & opcode0 == `I_ENV_FORMAT & funct3_0 == 0) ? 1'b1 : 1'b0;
+assign syscall1 = (IDEX_Jump == 2'b00 & IDEX_JumpJALR == 1'b0 & opcode1 == `I_ENV_FORMAT & funct3_1 == 0) ? 1'b1 : 1'b0;
+
 always @(*) begin
-	if(reg_type == 3'b001) begin
-		if(funct3[1:0] == 2'b00) begin
-			csr_write_allowed = 1'b0;
-		end
-		else if(funct3[1:0] == 2'b01) begin
-			csr_write_allowed = 1'b1;
-		end
-		else begin
-			if(instr_rs1 == 32'b0) begin
-				csr_write_allowed = 1'b0;
-			end
-			else begin
-				csr_write_allowed = 1'b1;
-			end
-		end
-	end
-	else begin
-		csr_write_allowed = 1'b0;
-	end
+    // CSR Write for Instruction 0
+    if(reg_type_0 == 3'b001) begin
+        if(funct3_0[1:0] == 2'b00) begin
+            csr_write_allowed_0 = 1'b0;
+        end
+        else if(funct3_0[1:0] == 2'b01) begin
+            csr_write_allowed_0 = 1'b1;
+        end
+        else begin
+            if(instr_rs1_0 == 5'b0) begin
+                csr_write_allowed_0 = 1'b0;
+            end
+            else begin
+                csr_write_allowed_0 = 1'b1;
+            end
+        end
+    end
+    else begin
+        csr_write_allowed_0 = 1'b0;
+    end
+
+    // CSR Write for Instruction 1
+    if(reg_type_1 == 3'b001) begin
+        if(funct3_1[1:0] == 2'b00) begin
+            csr_write_allowed_1 = 1'b0;
+        end
+        else if(funct3_1[1:0] == 2'b01) begin
+            csr_write_allowed_1 = 1'b1;
+        end
+        else begin
+            if(instr_rs1_1 == 5'b0) begin
+                csr_write_allowed_1 = 1'b0;
+            end
+            else begin
+                csr_write_allowed_1 = 1'b1;
+            end
+        end
+    end
+    else begin
+        csr_write_allowed_1 = 1'b0;
+    end
 end
-//Sign Extension Unit
-signExtend signExtendUnit (
-	.instr(IFID_instr[31:7]),
-	.imm_i(imm_i),
-	.imm_s(imm_s),
-	.imm_b(imm_b),
-	.imm_u(imm_u),
-	.imm_j(imm_j),
-	.imm_z(imm_z)
+
+//Sign Extension Unit 0
+signExtend signExtendUnit0 (
+	.instr(IFID_instr0[31:7]),
+	.imm_i(imm_i_0),
+	.imm_s(imm_s_0),
+	.imm_b(imm_b_0),
+	.imm_u(imm_u_0),
+	.imm_j(imm_j_0),
+	.imm_z(imm_z_0)
+);
+
+//Sign Extension Unit 1
+signExtend signExtendUnit1 (
+	.instr(IFID_instr1[31:7]),
+	.imm_i(imm_i_1),
+	.imm_s(imm_s_1),
+	.imm_b(imm_b_1),
+	.imm_u(imm_u_1),
+	.imm_j(imm_j_1),
+	.imm_z(imm_z_1)
 );
 
 // Register file
 RegFile cpu_regs (
 	.clock(clock),
 	.reset(reset),
-	.raA(instr_rs1),
-	.raB(instr_rs2),
-	.floatingID(reg_type == 3'b010 || reg_type == 3'b100),
-	.floatingWB((MEMWB_reg_type == 3'b010) || (MEMWB_reg_type == 3'b011) || MEMWB_reg_type == 3'b101),
+	
+	// Read ports for instruction 0
+	.raA_0(instr0_rs1),
+	.raB_0(instr0_rs2),
+	.floatingID_0(reg_type_0 == 3'b010 || reg_type_0 == 3'b100),
+	.rdA_0(rdA_0),
+	.rdB_0(rdB_0),
+
+	// Read ports for instruction 1
+	.raA_1(instr1_rs1),
+	.raB_1(instr1_rs2),
+	.floatingID_1(reg_type_1 == 3'b010 || reg_type_1 == 3'b100),
+	.rdA_1(rdA_1),
+	.rdB_1(rdB_1),
+
 	// load and store instructions access the integer regfile
 	// when reading and the fp regfile when storing
 	// the regtype 11 is subsequently indicating exactly that
-	.wa(MEMWB_RegWriteAddr),
-	.wen(MEMWB_RegWrite),
-	.wd(wRegData),
-	.rdA(rdA),
-	.rdB(rdB)
+
+	// Write port for instruction 0
+	.wa_0(MEMWB_RegWriteAddr_0),
+	.wen_0(MEMWB_RegWrite_0),
+	.wd_0(wRegData_0)
+	.floatingWB_0((MEMWB_reg_type_0 == 3'b010) || (MEMWB_reg_type_0 == 3'b011) || MEMWB_reg_type_0 == 3'b101),
+	
+	// Write port for instruction 1
+	.wa_1(MEMWB_RegWriteAddr_1),
+	.wen_1(MEMWB_RegWrite_1),
+	.wd_1(wRegData_1)
+	.floatingWB_1((MEMWB_reg_type_1 == 3'b010) || (MEMWB_reg_type_1 == 3'b011) || MEMWB_reg_type_1 == 3'b101),
 );
 
 
 
 
-// Sign Extended Signal Selection
-SignExtendSelector SignExtendSelector (
-	.out(signExtend),
-	.imm_i(imm_i),
-	.imm_s(imm_s),
-	.imm_b(imm_b),
-	.imm_u(imm_u),
-	.imm_j(imm_j),
-	.imm_z(imm_z),
-	.opcode(opcode)
+// Sign Extended Signal Selection 0
+SignExtendSelector SignExtendSelector0 (
+	.out(signExtend0),
+	.imm_i(imm_i_0),
+	.imm_s(imm_s_0),
+	.imm_b(imm_b_0),
+	.imm_u(imm_u_0),
+	.imm_j(imm_j_0),
+	.imm_z(imm_z_0),
+	.opcode(opcode0)
+);
+
+// Sign Extended Signal Selection 1
+SignExtendSelector SignExtendSelector1 (
+	.out(signExtend1),
+	.imm_i(imm_i_1),
+	.imm_s(imm_s_1),
+	.imm_b(imm_b_1),
+	.imm_u(imm_u_1),
+	.imm_j(imm_j_1),
+	.imm_z(imm_z_1),
+	.opcode(opcode1)
 );
 
 
@@ -363,9 +468,10 @@ always @(posedge clock or negedge reset)
 begin
 	if ((reset == 1'b0)) begin
 		IDEX_inA_is_PC	<= 1'b0;
-		IDEX_Jump		<= 1'b0;
+		IDEX_Jump		<= 2'b00;
 		IDEX_JumpJALR	<= 1'b0;
-		IDEX_signExtend	<= 32'b0;
+		IDEX_signExtend0<= 32'b0;
+		IDEX_signExtend1<= 32'b0;
 		IDEX_instr_rd	<= 5'b0;
 		IDEX_instr_rs1	<= 5'b0;
 		IDEX_instr_rs2	<= 5'b0;
@@ -382,7 +488,8 @@ begin
 		IDEX_PC			<= 32'b0;
 		IDEX_rdA		<= 32'b0;
 		IDEX_rdB		<= 32'b0;
-		IDEX_reg_type	<= 3'b0;
+		IDEX_reg_type_0	<= 3'b0;
+		IDEX_reg_type_1	<= 3'b0;
 		IDEX_instr		<= 32'b0;
 		IDEX_csr_addr	<= 12'b0;
 		IDEX_csr_write_allowed <= 1'b0;
@@ -391,9 +498,10 @@ begin
 	begin
 		if ((bubble_idex == 1'b1)) begin
 			IDEX_inA_is_PC	<= 1'b0;
-			IDEX_Jump		<= 1'b0;
+			IDEX_Jump		<= 2'b00;
 			IDEX_JumpJALR	<= 1'b0;
-			IDEX_signExtend	<= 32'b0;
+			IDEX_signExtend0<= 32'b0;
+			IDEX_signExtend1<= 32'b0;
 			IDEX_instr_rd	<= 5'b0;
 			IDEX_instr_rs1	<= 5'b0;
 			IDEX_instr_rs2	<= 5'b0;
@@ -409,7 +517,8 @@ begin
 			IDEX_funct7		<= 7'b0;
 			IDEX_rdA		<= 32'b0;
 			IDEX_rdB		<= 32'b0;
-			IDEX_reg_type	<= 3'b0;
+			IDEX_reg_type_0	<= 3'b0;
+			IDEX_reg_type_1	<= 3'b0;
 			IDEX_instr		<= 32'b0;
 			IDEX_csr_addr	<= 12'b0;
 			IDEX_csr_write_allowed <= 1'b0;
@@ -419,7 +528,8 @@ begin
 			IDEX_inA_is_PC	<= inA_is_PC;
 			IDEX_Jump		<= Jump;
 			IDEX_JumpJALR	<= JumpJALR;
-			IDEX_signExtend	<= signExtend;
+			IDEX_signExtend0<= signExtend0;
+			IDEX_signExtend1<= signExtend1;
 			IDEX_instr_rd	<= instr_rd;
 			IDEX_instr_rs1	<= instr_rs1;
 			IDEX_instr_rs2	<= instr_rs2;
@@ -431,14 +541,16 @@ begin
 			IDEX_MemWrite	<= MemWrite;
 			IDEX_MemToReg	<= MemToReg;
 			IDEX_RegWrite	<= RegWrite;
-			IDEX_funct3	<= funct3;
-			IDEX_funct7	<= funct7;
-			IDEX_PC		<= IFID_PC;
-			IDEX_rdA	<= rdA;
-			IDEX_rdB	<= rdB;
+			IDEX_funct3_0	<= funct3_0;
+			IDEX_funct3_1	<= funct3_1;
+			IDEX_funct7		<= funct7;
+			IDEX_PC			<= IFID_PC;
+			IDEX_rdA		<= rdA;
+			IDEX_rdB		<= rdB;
 			// if the exponent is NaN or +-infinity then to propagate the value, turn the other to zero
 			// if both are NaN or inf, then keep just one (the extra condition for rdA)
-			IDEX_reg_type	<= reg_type;
+			IDEX_reg_type_0	<= reg_type_0;
+			IDEX_reg_type_1	<= reg_type_1;
 			IDEX_instr		<= IFID_instr;
 			IDEX_csr_addr	<= csr_addr;
 			IDEX_csr_write_allowed <= csr_write_allowed;
@@ -467,9 +579,9 @@ always@(posedge clock or negedge reset)begin
 			MEPC_IDLE:begin
 				if(flushPipeline)
 				begin
-					if(branch_taken||Jump||EXMEM_JumpJALR)
+					if(branch_taken || Jump || EXMEM_JumpJALR)
 					begin
-						pc_string="BID Taken";
+						pc_string = "BID Taken";
 						newmepc <= PC_new;
 					end
 					else if(write_pc==1'b0&&IFID_PC!=32'hffffffff)
@@ -552,7 +664,7 @@ CSRFile csrFile(
 	.clock(clock),
 	.reset(reset),
 	.wen(MEMWB_csr_write_allowed),
-	.ren(reg_type==3'b001),
+	.ren(reg_type==3'b001),	// ALLAGMA *2
 	.csrAddr(csr_addr),
 	.csrWAddr(MEMWB_csr_addr),
 	.wd(WB_csr_data),
@@ -575,7 +687,7 @@ CSRFile csrFile(
 // Main Control Unit
 control_main control_main (
 	.RegDst(RegDst),
-	.reg_type(reg_type),
+	.reg_type(reg_type), //ALLAGMA *2
 	.Branch(Branch),
 	.MemRead(MemRead),
 	.MemWrite(MemWrite),
@@ -586,8 +698,8 @@ control_main control_main (
 	.JumpJALR(JumpJALR),
 	.inA_is_PC(inA_is_PC),
 	.EXcntrl(EXcntrl),
-	.funct7(funct7),
-	.opcode(opcode)
+	.funct7(funct7), // ALLAGMA *2
+	.opcode(opcode)	// ALLAGMA *2
 );
 wire [31:0] div_rdA, div_rdB;
 //division FSM
@@ -620,7 +732,8 @@ control_stall_id control_stall_id (
 	.trapdiv(trapdiv),
 	.divcy((local_divcy != 32)),
 	.PCSrc			(PCSrc),
-	.reg_type(reg_type));
+	.reg_type(reg_type)	//ALLAGMA *2
+	);
 
 /************************ Execution Unit (EX)  ***********************************/
 
@@ -635,7 +748,7 @@ always @(*) begin
 end
 // ALU input B
 always @(*) begin
-    if (IDEX_Jump == 1'b1 || IDEX_JumpJALR == 1'b1) begin
+    if (IDEX_Jump != 2'b00 || IDEX_JumpJALR == 1'b1) begin
         ALUInB = 32'd4;
     end else if (IDEX_ALUSrc == 1'b0) begin
         ALUInB = bypassOutB;
@@ -690,21 +803,23 @@ begin
 		local_divcy <= 6'd32;
 	end
 	if ((reset == 1'b0)) begin
-		local_divcy		<= 6'd32;
+		local_divcy			<= 6'd32;
 		EXMEM_ALUOut		<= 32'b0;
 		EXMEM_JumpJALR 		<= 1'b0;
 		EXMEM_BranchALUOut	<= 32'b0;
 		EXMEM_RegWriteAddr	<= 5'b0;
 		EXMEM_MemWriteData	<= 32'b0;
-		EXMEM_Zero		<= 1'b0;
+		EXMEM_Zero			<= 1'b0;
 		EXMEM_Branch		<= 1'b0;
 		EXMEM_MemRead		<= 1'b0;
 		EXMEM_MemWrite		<= 1'b0;
 		EXMEM_MemToReg		<= 1'b0;
 		EXMEM_RegWrite		<= 1'b0;
-		EXMEM_funct3		<= 3'b0;
+		EXMEM_funct3_0		<= 3'b0;
+		EXMEM_funct3_1		<= 3'b0;
 		EXMEM_csr_data		<= 32'b0;
-		EXMEM_reg_type		<= 3'b000;
+		EXMEM_reg_type_0	<= 3'b000;
+		EXMEM_reg_type_1	<= 3'b000;
 		EXMEM_csr_addr		<= 12'b0;
 		EXMEM_csr_write_allowed <= 1'b0;
 		EXMEM_PC			<= 32'hffffffff;
@@ -724,16 +839,18 @@ begin
 			EXMEM_MemWrite		<= 1'b0;
 			EXMEM_MemToReg		<= 1'b0;
 			EXMEM_RegWrite		<= 1'b0;
-			EXMEM_funct3		<= 3'b0;
+			EXMEM_funct3_0		<= 3'b0;
+			EXMEM_funct3_1		<= 3'b0;
 			EXMEM_csr_data		<= 32'b0;
-			EXMEM_reg_type		<= 3'b000;
+			EXMEM_reg_type_0	<= 3'b000;
+			EXMEM_reg_type_1	<= 3'b000;
 			EXMEM_csr_addr		<= 12'b0;
 			EXMEM_csr_write_allowed <= 1'b0;
 			EXMEM_PC			<= 32'hffffffff;
 			EXMEM_instr			<= 32'b0;
 		end 
 		else if (write_exmem == 1'b1) begin
-			EXMEM_ALUOut		<= divres ? divres : ((IDEX_reg_type == 3'b010) ? FPUOut : ALUOut);
+			EXMEM_ALUOut		<= divres ? divres : ((IDEX_reg_type == 3'b010) ? FPUOut : ALUOut); // ALLAGMA *2
 			EXMEM_JumpJALR		<= IDEX_JumpJALR;
 			EXMEM_BranchALUOut	<= BranchALUOut;
 			EXMEM_RegWriteAddr	<= RegWriteAddr;
@@ -744,9 +861,11 @@ begin
 			EXMEM_MemWrite		<= IDEX_MemWrite;
 			EXMEM_MemToReg		<= IDEX_MemToReg;
 			EXMEM_RegWrite		<= IDEX_RegWrite;
-			EXMEM_funct3		<= IDEX_funct3;
+			EXMEM_funct3_0		<= IDEX_funct3_0;
+			EXMEM_funct3_1		<= IDEX_funct3_1;
 			EXMEM_csr_data		<= csr_data;
-			EXMEM_reg_type		<= IDEX_reg_type;
+			EXMEM_reg_type_0	<= IDEX_reg_type_0;
+			EXMEM_reg_type_1	<= IDEX_reg_type_1;
 			EXMEM_csr_addr		<= IDEX_csr_addr;
 			EXMEM_csr_write_allowed <= IDEX_csr_write_allowed;
 			EXMEM_PC			<= IDEX_PC;
@@ -775,9 +894,9 @@ control_bypass_ex control_bypass_ex(
 	.idex_rs1(IDEX_instr_rs1), 
 	.idex_rs2(IDEX_instr_rs2),
 	.idex_rd(IDEX_instr_rd),
-	.idex_reg_type(IDEX_reg_type),
-	.exmem_reg_type(EXMEM_reg_type),
-	.memwb_reg_type(MEMWB_reg_type),
+	.idex_reg_type(IDEX_reg_type),	// ALLAGMA *2
+	.exmem_reg_type(EXMEM_reg_type), // ALLAGMA *2
+	.memwb_reg_type(MEMWB_reg_type), // ALLAGMA *2
 	.idex_rdA(IDEX_rdA),
 	.idex_rdB(IDEX_rdB),
 	.wRegData(wRegData),
@@ -799,7 +918,7 @@ control_bypass_ex control_bypass_ex(
 
 /*********************************** Memory Unit (MEM)  ********************************************/
 mem_write_selector mem_write_selector(
-	.mem_select(EXMEM_funct3),
+	.mem_select(EXMEM_funct3),	// ALLAGMA *2
 	.ALUin(EXMEM_MemWriteData),
 	.offset(EXMEM_ALUOut[1:0]),
 	.byte_select_vector(byte_select_vector),
@@ -820,7 +939,8 @@ begin
 		MEMWB_RegWrite		<= 1'b0;
 		MEMWB_funct3		<= 3'b0;
 		MEMWB_csr_data		<= 32'b0;
-		MEMWB_reg_type		<= 3'b000;
+		MEMWB_reg_type_0	<= 3'b000;
+		MEMWB_reg_type_1	<= 3'b000;
 		MEMWB_csr_addr		<= 12'b0;
 		MEMWB_csr_write_allowed <= 1'b0;
 		MEMWB_PC			<= 32'b0;
@@ -836,7 +956,8 @@ begin
 			MEMWB_RegWrite		<= 1'b0;
 			MEMWB_funct3		<= 3'b0;
 			MEMWB_csr_data		<= 32'b0;
-			MEMWB_reg_type		<= 3'b000;
+			MEMWB_reg_type_0	<= 3'b000;
+			MEMWB_reg_type_1	<= 3'b000;
 			MEMWB_csr_addr		<= 12'b0;
 			MEMWB_csr_write_allowed <= 1'b0;
 			MEMWB_PC			<= 32'hffffffff;
@@ -850,7 +971,8 @@ begin
 			MEMWB_RegWrite		<= EXMEM_RegWrite;
 			MEMWB_funct3		<= EXMEM_funct3;
 			MEMWB_csr_data		<= EXMEM_csr_data;
-			MEMWB_reg_type		<= EXMEM_reg_type;
+			MEMWB_reg_type_0	<= EXMEM_reg_type_0;
+			MEMWB_reg_type_1	<= EXMEM_reg_type_1;
 			MEMWB_csr_addr		<= EXMEM_csr_addr;
 			MEMWB_csr_write_allowed <= EXMEM_csr_write_allowed;
 			MEMWB_PC			<= EXMEM_PC;
@@ -877,6 +999,8 @@ mem_read_selector mem_read_selector(
 	.byte_index(MEMWB_ALUOut[1:0]),
 	.out(MemOut)
 );
+
+// ALLAGMA *2
 always @(*) begin
 	if (MEMWB_reg_type != 3'b001) begin
 		// if we are not writing to memory get the data from the ALU
