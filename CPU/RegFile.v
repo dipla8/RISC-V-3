@@ -43,31 +43,16 @@ begin
             data[2] <= 256;
     end
 	else begin
-		if (wen_0 && wen_1 && wa_0 == wa_1 && wa_0 != 5'b0) begin
-			// If both instructions are writing to the same register, we prioritize instruction 1 (the younger one)
-			if (floatingWB_1) begin
-				data[wa_1 + 32] <= wd_1;
-			end else begin
-				data[wa_1] <= wd_1;
-			end
-		end
-		else begin	// No conflict, we can write both instructions as normal
-			// Instruction 0 write port
-			if (wen_0 == 1'b1 && wa_0 != 5'b0 && floatingWB_0)begin
-				data[wa_0 + 32] <=  wd_0;
-			end
-			else if (wen_0 == 1'b1 && wa_0 != 5'b0)begin
-				data[wa_0] <=  wd_0;
-			end
+		// Writeback data sequencially keeping the priority for instruction 1 if wa_0 == wa_1
+        if (wen_0 == 1'b1 && wa_0 != 5'b0) begin
+            if (floatingWB_0) data[wa_0 + 32] <= wd_0;
+            else              data[wa_0]      <= wd_0;
+        end
 
-			// Instruction 1 write port
-			if (wen_1 == 1'b1 && wa_1 != 5'b0 && floatingWB_1)begin
-				data[wa_1 + 32] <=  wd_1;
-			end
-			else if (wen_1 == 1'b1 && wa_1 != 5'b0)begin
-				data[wa_1] <=  wd_1;
-			end
-		end
+        if (wen_1 == 1'b1 && wa_1 != 5'b0) begin
+            if (floatingWB_1) data[wa_1 + 32] <= wd_1;
+            else              data[wa_1]      <= wd_1;
+        end	
 	end
     
 end
