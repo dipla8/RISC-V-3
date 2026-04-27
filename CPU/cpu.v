@@ -759,21 +759,38 @@ CSRFile csrFile(
 );
 
 // Main Control Unit
-control_main control_main (
-	.RegDst(RegDst),
-	.reg_type(reg_type), //ALLAGMA *2
-	.Branch(Branch),
-	.MemRead(MemRead),
-	.MemWrite(MemWrite),
-	.MemToReg(MemToReg),
-	.ALUSrc(ALUSrc),
-	.RegWrite(RegWrite),
+control_main control_main_0 (
+	.RegDst(RegDst_0),
+	.reg_type(reg_type_0), 
+	.Branch(Branch_0),
+	.MemRead(MemRead_0),
+	.MemWrite(MemWrite_0),
+	.MemToReg(MemToReg_0),
+	.ALUSrc(ALUSrc_0),
+	.RegWrite(RegWrite_0),
 	.Jump(Jump),
-	.JumpJALR(JumpJALR),
-	.inA_is_PC(inA_is_PC),
-	.EXcntrl(EXcntrl),
-	.funct7(funct7), // ALLAGMA *2
-	.opcode(opcode)	// ALLAGMA *2
+	.JumpJALR(JumpJALR_0),
+	.inA_is_PC(inA_is_PC_0),
+	.EXcntrl(EXcntrl_0),
+	.funct7(funct7_0), 
+	.opcode(opcode0)	
+);
+
+control_main control_main_1 (
+	.RegDst(RegDst_1),
+	.reg_type(reg_type_1), 
+	.Branch(Branch_1),
+	.MemRead(MemRead_1),
+	.MemWrite(MemWrite_1),
+	.MemToReg(MemToReg_1),
+	.ALUSrc(ALUSrc_1),
+	.RegWrite(RegWrite_1),
+	.Jump(Jump),
+	.JumpJALR(JumpJALR_1),
+	.inA_is_PC(inA_is_PC_1),
+	.EXcntrl(EXcntrl_1),
+	.funct7(funct7_1), 
+	.opcode(opcode1)	
 );
 
 wire [31:0] div_rdA, div_rdB;
