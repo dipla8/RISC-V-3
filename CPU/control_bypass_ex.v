@@ -14,46 +14,108 @@
  *          Determines the correct source for the operands by forwarding data from previous stages.
  */
 module control_bypass_ex(
-    output reg [31:0] bypassOutA,     // Bypassed or original operand A
-    output reg [31:0] bypassOutB,     // Bypassed or original operand B
-    input [4:0] idex_rs1,             // Source register 1 address from ID/EX stage
-    input [4:0] idex_rs2,             // Source register 2 address from ID/EX stage
-    input [4:0] idex_rd,              // Destination register address from ID/EX stage
-    input [2:0] idex_reg_type,        // Type of the register (general or CSR)
-    input [2:0] exmem_reg_type,             // Type of the register (general or CSR)
-    input [2:0] memwb_reg_type,             // Type of the register (general or CSR)
-    input [31:0] idex_rdA,            // Operand A from ID/EX stage
-    input [31:0] idex_rdB,            // Operand B from ID/EX stage
-    input [31:0] wRegData,            // Writeback data from MEM/WB stage
-    input [31:0] EXMEM_ALUOut,        // ALU output from EX/MEM stage
-    input [31:0] csr_data,            // Data from CSR
-    input [31:0] WB_csr_data,            // Data to be written to csr
-    input [31:0] idex_csr_addr,            // Address for CSR
-    input [31:0] exmem_csr_addr,            // Address for CSR
-    input [31:0] memwb_csr_addr,            // Address for CSR
-    input csr_immidiate,              // CSR Value originates from Immidiate
-	input exmem_csr_write_allowed,
-	input memwb_csr_write_allowed,
-    input [4:0] exmem_rd,             // Destination register address from EX/MEM stage
-    input [4:0] memwb_rd,             // Destination register address from MEM/WB stage
-    input exmem_regwrite,             // Write enable signal for EX/MEM stage
-    input memwb_regwrite              // Write enable signal for MEM/WB stage
+    output reg [31:0] bypassOutA_0,     // Bypassed or original operand A
+	output reg [31:0] bypassOutA_1,
+    output reg [31:0] bypassOutB_0,     // Bypassed or original operand B
+	output reg [31:0] bypassOutB_1,
+    input [4:0] idex_rs1_0,             // Source register 1 address from ID/EX stage
+	input [4:0] idex_rs1_1,
+    input [4:0] idex_rs2_0,             // Source register 2 address from ID/EX stage
+	input [4:0] idex_rs2_1,
+    input [4:0] idex_rd_0,              // Destination register address from ID/EX stage
+	input [4:0] idex_rd_1,
+    input [2:0] idex_reg_type_0,        // Type of the register (general or CSR)
+	input [2:0] idex_reg_type_1,
+    input [2:0] exmem_reg_type_0,       // Type of the register (general or CSR)
+	input [2:0] exmem_reg_type_1,
+    input [2:0] memwb_reg_type_0,       // Type of the register (general or CSR)
+	input [2:0] memwb_reg_type_1,
+    input [31:0] idex_rdA_0,            // Operand A from ID/EX stage
+	input [31:0] idex_rdA_1,
+    input [31:0] idex_rdB_0,            // Operand B from ID/EX stage
+	input [31:0] idex_rdB_1,
+    input [31:0] wRegData_0,            // Writeback data from MEM/WB stage
+	input [31:0] wRegData_1,
+    input [31:0] EXMEM_ALUOut_0,        // ALU output from EX/MEM stage
+	input [31:0] EXMEM_ALUOut_1,
+    input [31:0] csr_data_0,              // Data from CSR
+	input [31:0] csr_data_1,
+    input [31:0] WB_csr_data_0,            // Data to be written to csr
+	input [31:0] WB_csr_data_1,
+    input [31:0] idex_csr_addr_0,            // Address for CSR
+	input [31:0] idex_csr_addr_1,
+    input [31:0] exmem_csr_addr_0,            // Address for CSR
+	input [31:0] exmem_csr_addr_1,
+    input [31:0] memwb_csr_addr_0,            // Address for CSR
+	input [31:0] memwb_csr_addr_1,
+    input csr_immidiate_0,              // CSR Value originates from Immidiate
+	input csr_immidiate_1,
+	input exmem_csr_write_allowed_0,
+	input exmem_csr_write_allowed_1,
+	input memwb_csr_write_allowed_0,
+	input memwb_csr_write_allowed_1,
+    input [4:0] exmem_rd_0,             // Destination register address from EX/MEM stage
+	input [4:0] exmem_rd_1,
+    input [4:0] memwb_rd_0,             // Destination register address from MEM/WB stage
+	input [4:0] memwb_rd_1,
+    input exmem_regwrite_0,             // Write enable signal for EX/MEM stage
+	input exmem_regwrite_1,
+    input memwb_regwrite_0,             // Write enable signal for MEM/WB stage
+	input memwb_regwrite_1
 );
 
 // Internal registers to hold bypass selection signals
-reg [1:0] bypassA; // Bypass selector for Operand A
-reg [1:0] bypassB; // Bypass selector for Operand B
+reg [2:0] bypassA_0; // Bypass selector for Operand A
+reg [2:0] bypassA_1;
+reg [2:0] bypassB_0; // Bypass selector for Operand B
+reg [2:0] bypassB_1; 
 
 // Determine bypassing logic for Operand A
+// always @(*) begin
+// 	if (exmem_regwrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs1) begin
+// 		bypassA = 2'b10; // Forward data from EX/MEM stage
+// 	end
+// 	else if (memwb_regwrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs1) begin
+// 		bypassA = 2'b01; // Forward data from MEM/WB stage
+// 	end
+// 	else begin
+// 		bypassA = 2'b00; // No forwarding, use ID/EX stage value
+// 	end
+// end
+
 always @(*) begin
-	if (exmem_regwrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs1) begin
-		bypassA = 2'b10; // Forward data from EX/MEM stage
+	if (exmem_regwrite_1 == 1'b1 && exmem_rd_1 != 5'b0 && exmem_rd_1 == idex_rs1_0) begin
+		bypassA_0 = 3'b001; // Forward data from EX/MEM stage way1
 	end
-	else if (memwb_regwrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs1) begin
-		bypassA = 2'b01; // Forward data from MEM/WB stage
+	else if (exmem_regwrite_0 == 1'b1 && exmem_rd_0 != 5'b0 && exmem_rd_0 == idex_rs1_0) begin
+		bypassA_0 = 3'b010; // Forward data from EX/MEM stage way0
+	end
+	else if (memwb_regwrite_1 == 1'b1 && memwb_rd_1 != 5'b0 && memwb_rd_1 == idex_rs1_0) begin
+		bypassA_0 = 3'b011; // Forward data from MEM/WB stage way1
+	end
+	else if (memwb_regwrite_0 == 1'b1 && memwb_rd_0 != 5'b0 && memwb_rd_0 == idex_rs1_0) begin
+		bypassA_0 = 3'b100; // Forward data from MEM/WB stage way0
 	end
 	else begin
-		bypassA = 2'b00; // No forwarding, use ID/EX stage value
+		bypassA_0 = 3'b000; // No forwarding, use ID/EX stage value
+	end
+end
+
+always @(*) begin
+	if (exmem_regwrite_1 == 1'b1 && exmem_rd_1 != 5'b0 && exmem_rd_1 == idex_rs1_1) begin
+		bypassA_1 = 3'b001; // Forward data from EX/MEM stage way0
+	end
+	else if (exmem_regwrite_0 == 1'b1 && exmem_rd_0 != 5'b0 && exmem_rd_0 == idex_rs1_1) begin
+		bypassA_1 = 3'b010; // Forward data from EX/MEM stage way1
+	end
+	else if (memwb_regwrite_1 == 1'b1 && memwb_rd_1 != 5'b0 && memwb_rd_1 == idex_rs1_1) begin
+		bypassA_1 = 3'b011; // Forward data from MEM/WB stage way0
+	end
+	else if (memwb_regwrite_0 == 1'b1 && memwb_rd_0 != 5'b0 && memwb_rd_0 == idex_rs1_1) begin
+		bypassA_1 = 3'b100; // Forward data from MEM/WB stage way1
+	end
+	else begin
+		bypassA_1 = 3'b000; // No forwarding, use ID/EX stage value
 	end
 end
 
